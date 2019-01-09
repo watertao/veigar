@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <springProperty scope="context" name="ROOT_LEVEL" source="logging.root.level" defaultValue="INFO" />
+  <springProperty scope="context" name="ENCODE_PATTERN" source="logging.encodePattern"
+                  defaultValue="%d{yyyy/MM/dd-HH:mm:ss SSS} %-5level - %msg %n" />
+
+  <springProfile name="dev">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <pattern>${ENCODE_PATTERN}</pattern>
+      </encoder>
+    </appender>
+    <root level="${ROOT_LEVEL}">
+      <appender-ref ref="STDOUT" />
+    </root>
+  </springProfile>
+
+  <springProfile name="prod">
+    <springProperty scope="context" name="LOG_PATH" source="logging.path" defaultValue="./log" />
+    <springProperty scope="context" name="LOG_FILE" source="logging.file" defaultValue="log" />
+    <springProperty scope="context" name="SPLIT_PATTERN" source="logging.splitPattern" defaultValue="yyyy-MM-dd" />
+    <springProperty scope="context" name="MAX_HISTORY" source="logging.maxHistory" defaultValue="30" />
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <FileNamePattern>${LOG_PATH}/${LOG_FILE}.%d{${SPLIT_PATTERN}}</FileNamePattern>
+        <MaxHistory>${MAX_HISTORY}</MaxHistory>
+      </rollingPolicy>
+      <encoder>
+        <pattern>${ENCODE_PATTERN}</pattern>
+        <charset class="java.nio.charset.Charset">UTF-8</charset>
+      </encoder>
+    </appender>
+    <root level="${ROOT_LEVEL}">
+      <appender-ref ref="ROLLING" />
+    </root>
+  </springProfile>
+
+</configuration>
