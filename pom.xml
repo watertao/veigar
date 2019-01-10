@@ -12,8 +12,8 @@
     <relativePath/>
   </parent>
 
-  <groupId>net.bandle.veigar</groupId>
-  <artifactId>rsrv-framework</artifactId>
+  <groupId>io.github.watertao</groupId>
+  <artifactId>veigar-framework</artifactId>
   <version>2.1.1-SNAPSHOT</version>
 
   <packaging>pom</packaging>
@@ -27,38 +27,38 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>net.bandle.veigar</groupId>
-        <artifactId>rsrv-core</artifactId>
+        <groupId>io.github.watertao</groupId>
+        <artifactId>veigar-core</artifactId>
         <version>${veigar.version}</version>
       </dependency>
       <dependency>
-        <groupId>net.bandle.veigar</groupId>
-        <artifactId>rsrv-audit-log</artifactId>
+        <groupId>io.github.watertao</groupId>
+        <artifactId>veigar-audit-log</artifactId>
         <version>${veigar.version}</version>
       </dependency>
       <dependency>
-        <groupId>net.bandle.veigar</groupId>
-        <artifactId>rsrv-db</artifactId>
+        <groupId>io.github.watertao</groupId>
+        <artifactId>veigar-db</artifactId>
         <version>${veigar.version}</version>
       </dependency>
       <dependency>
-        <groupId>net.bandle.veigar</groupId>
-        <artifactId>rsrv-session</artifactId>
+        <groupId>io.github.watertao</groupId>
+        <artifactId>veigar-session</artifactId>
         <version>${veigar.version}</version>
       </dependency>
       <dependency>
-        <groupId>net.bandle.veigar</groupId>
-        <artifactId>rsrv-session-redis</artifactId>
+        <groupId>io.github.watertao</groupId>
+        <artifactId>veigar-session-redis</artifactId>
         <version>${veigar.version}</version>
       </dependency>
       <dependency>
-        <groupId>net.bandle.veigar</groupId>
-        <artifactId>rsrv-session-map</artifactId>
+        <groupId>io.github.watertao</groupId>
+        <artifactId>veigar-session-map</artifactId>
         <version>${veigar.version}</version>
       </dependency>
       <dependency>
-        <groupId>net.bandle.veigar</groupId>
-        <artifactId>rsrv-auth</artifactId>
+        <groupId>io.github.watertao</groupId>
+        <artifactId>veigar-auth</artifactId>
         <version>${veigar.version}</version>
       </dependency>
       <dependency>
@@ -75,14 +75,14 @@
   </dependencyManagement>
 
   <modules>
-    <module>rsrv-core</module>
-    <module>rsrv-parent</module>
-    <module>rsrv-audit-log</module>
-    <module>rsrv-db</module>
-    <module>rsrv-session</module>
-    <module>rsrv-session-redis</module>
-    <module>rsrv-session-map</module>
-    <module>rsrv-auth</module>
+    <module>veigar-core</module>
+    <module>veigar-parent</module>
+    <module>veigar-audit-log</module>
+    <module>veigar-db</module>
+    <module>veigar-session</module>
+    <module>veigar-session-redis</module>
+    <module>veigar-session-map</module>
+    <module>veigar-auth</module>
   </modules>
 
 </project>
