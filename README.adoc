@@ -1,10 +1,12 @@
 = Veigar
 watertao <1059912278@qq.com>
 :toc: left
+:toclevels: 3
 :source-highlighter: coderay
 :sectnums:
-:sectnumlevels: 4
 :icons: font
+
+:sectnumlevels: 3
 
 一个用于开发 RESTful 接口的脚手架，基于 spring boot。
 
@@ -141,3 +143,173 @@ public class TestController {
 ----
 mvn spring-boot:run
 ----
+
+
+== 设计理念
+
+veigar 是在 spring boot 的基础上进一步封装了在开发 RESTful 接口时常用的一些特性，用于简化开发框架的搭建过程。 +
+目前 veigar 支持的组件包括：
+
+[cols="1,2,1", options="header"]
+|===
+|组件名
+|作用
+|依赖
+
+|*veigar-parent*
+|用于简化 pom.xml 中对 veigar 的依赖
+|
+
+|*veigar-core*
+|核心组件
+|
+
+|*veigar-session*
+|若项目具有用户会话的概念，就需要用到此组件。而此组件一般不单独依赖，还需要额外依赖一个 veigar-session-* 来指定会话持久化到哪里
+|veigar-core
+
+|*veigar-session-map*
+|将会话保存在内存 Map 中
+|veigar-session
+
+|*veigar-session-redis*
+|将会话保存在 redis 中
+|veigar-session
+
+|*veigar-db*
+|若项目需要进行数据库访问，可以依赖此组件
+|veigar-core
+
+|*veigar-auth*
+|提供了用户认证相关的扩展点
+|veigar-session
+
+|*veigar-audit-log*
+|提供了用户日志审计相关的扩展点
+|veigar-session
+
+|===
+
+
+== 特性
+
+=== 基本 RESTful 支持
+
+==== query parameter 获取
+
+.HTTP REQUEST
+----
+GET /users?name=watertao HTTP/1.1
+----
+
+.controller
+[source, java]
+----
+@GetMapping("/users")
+public void test(
+  @RequestParam("name") String name       // <1>
+) {
+    // name = "watertao";
+}
+----
+<1> 使用 `@RequestParam` 获取 query parameter
+
+==== path variable 获取
+
+.HTTP REQUEST
+----
+GET /users/133 HTTP/1.1
+----
+
+.controller
+[source, java]
+----
+@GetMapping("/users/{userId}")              // <1>
+public void test(
+  @PathVariable("userId") Integer userId    // <2>
+) {
+    // userId = 133;
+}
+----
+<1> URI 的定义中需要指定 path variable 参数名，本例中为 `{userId}`
+<2> 使用 `@PathVariable` 获取 path variable, 注解的参数需要与 URI 中 `{userId}` 内的定义相对应
+
+
+==== request body 获取
+
+.HTTP REQUEST
+----
+POST /users HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+
+{
+  "name": "watertao"
+}
+----
+
+.controller
+[source, java]
+----
+@PostMapping("/users")
+public void test(
+  @RequestBody User user                    // <1>
+) {
+    // user.getName() = "watertao"
+}
+----
+<1> 使用 `@RequestBody` 注解告诉 spring boot 将 JSON 反序列化为对象
+
+.User
+[source, java]
+----
+public class User {
+    private String name;
+    public String getName() {...}
+    public void setName(String name) {...}
+}
+----
+
+==== Content-Type
+
+veigar 只支持 JSON 格式，且字符集为 UTF-8 的请求。  +
+所以，客户端在发起 RESTful 请求调用时，若请求体中包含了 JSON，则必须设置 `Content-Type` ：
+
+.HTTP REQUEST
+----
+POST /users HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+
+{ ... }
+----
+
+
+==== 请求校验
+
+veigar 集成了 Hibernator-validator 作为 bean validation 的实现。所以我们可以很方便的对请求体中的 JSON 进行验证。
+
+.User.java
+[source, java]
+----
+public class User {
+    @NotEmpty
+    private String name;                    // <1>
+
+    public String getName() {...}
+
+    public void setName(String name) {...}
+}
+----
+<1> 通过注解 `@NotEmpty` 确保 `name` 属性不可为空
+
+
+.controller
+[source, java]
+----
+@PostMapping("/users")
+public Object test(
+  @Valid @RequestBody User user             // <1>
+) {
+
+}
+----
+<1> 通过添加注解 `@Valid` 告知 spring boot 对 `user` 对象进行校验，若 JSON 中 name 属性为空，则会抛出校验异常
