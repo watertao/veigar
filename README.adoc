@@ -4,7 +4,7 @@ watertao <1059912278@qq.com>
 :source-highlighter: coderay
 :sectnums:
 :sectnumlevels: 4
-:icons: font
+:icons: awesome
 
 一个用于开发 RESTful 接口的脚手架，基于 spring boot。
 
