@@ -95,7 +95,7 @@ public class BootstrapApplication {
 
 [NOTE]
 ====
-需要注意的是，`scanBasePackages` 中设置的自己项目的 package 需要尽量设置到公司级别，比如上例中的
+需要注意的是，`scanBasePackages` 中自己项目的 package 需要尽量设置到公司级别，比如上例中的
 `com.mycompany` ，因为这会影响到组件的扫描范围。
 ====
 
@@ -109,8 +109,8 @@ app.basePackage = com.mycompany.myapp   # <2>
 server.port = 8080                      # <3>
 cors.allowedOrigins = *                 # <4>
 ----
-<1> 开发环境下设置为 dev， 生产环境下设置为 prod
-<2> 某些组件需要读取并使用
+<1> 开发环境下设置为 `dev`， 生产环境下设置为 `prod`
+<2> 项目级别的 package（公司级别下一级），某些组件需要读取并使用这个参数
 <3> 服务端口
 <4> CORS 允许的来源
 
