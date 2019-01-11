@@ -70,11 +70,24 @@ watertao <1059912278@qq.com>
 </build>
 ----
 
+[source]
 ----
-line of code  <1>
-line of code  # <2>
-line of code  ;; <3>
+\line of code  <1>
+\line of code  # <2>
+\line of code  ;; <3>
 ----
 <1> A callout behind a line comment for C-style languages.
 <2> A callout behind a line comment for Ruby, Python, Perl, etc.
 <3> A callout behind a line comment for Clojure.
+
+[source]
+----
+\ifdef::env-github[] <1>
+:imagesdir: https://gist.githubusercontent.com/path/to/gist/revision/dir/with/all/images
+\endif::[]
+\ifndef::env-github[] <2>
+:imagesdir: ./
+\endif::[]
+----
+<1> Use the `ifdef` to customize for online rendering (2)
+<2> Use the `ifndef` to customize for offline
