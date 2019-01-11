@@ -4,7 +4,7 @@ watertao <1059912278@qq.com>
 :source-highlighter: coderay
 :sectnums:
 :sectnumlevels: 4
-:icons: awesome
+:icons: font
 
 一个用于开发 RESTful 接口的脚手架，基于 spring boot。
 
@@ -35,15 +35,15 @@ watertao <1059912278@qq.com>
 [source, xml]
 ----
 <parent>  // <1>
-     <groupId>io.github.watertao</groupId>
-     <artifactId>veigar-parent</artifactId>
-     <version>2.1.1-SNAPSHOT</version>
+  <groupId>io.github.watertao</groupId>
+  <artifactId>veigar-parent</artifactId>
+  <version>2.1.1-SNAPSHOT</version>
 </parent>
 <groupId>com.mycompy</groupId>
 <artifactId>myapp</artifactId>
 <version>1.0.0-SNAPSHOT</version>
 ----
-<1> Library import
+<1> 继承 `veigar-parent`
 
 ==== 依赖 veigar-core
 
@@ -55,39 +55,19 @@ watertao <1059912278@qq.com>
 <artifactId>myapp</artifactId>
 <version>1.0.0-SNAPSHOT</version>
 <dependencies>
-  <dependency>
+  <dependency>  <!--1-->
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-core</artifactId>
   </dependency>
 </dependencies>
 <build>
   <plugins>
-    <plugin>
+    <plugin>  <!--2-->
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-maven-plugin</artifactId>
     </plugin>
   </plugins>
 </build>
 ----
-
-[source]
-----
-\line of code  <1>
-\line of code  # <2>
-\line of code  ;; <3>
-----
-<1> A callout behind a line comment for C-style languages.
-<2> A callout behind a line comment for Ruby, Python, Perl, etc.
-<3> A callout behind a line comment for Clojure.
-
-[source]
-----
-\ifdef::env-github[] <1>
-:imagesdir: https://gist.githubusercontent.com/path/to/gist/revision/dir/with/all/images
-\endif::[]
-\ifndef::env-github[] <2>
-:imagesdir: ./
-\endif::[]
-----
-<1> Use the `ifdef` to customize for online rendering (2)
-<2> Use the `ifndef` to customize for offline
+<1> 依赖 `veigar-core`
+<2> 添加插件 `spring-boot-maven-plugin`
