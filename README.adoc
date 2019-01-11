@@ -34,7 +34,7 @@ watertao <1059912278@qq.com>
 .pom.xml
 [source, xml]
 ----
-<parent>  // <1>
+<parent>                                <!--1-->
   <groupId>io.github.watertao</groupId>
   <artifactId>veigar-parent</artifactId>
   <version>2.1.1-SNAPSHOT</version>
@@ -56,14 +56,14 @@ watertao <1059912278@qq.com>
 <artifactId>myapp</artifactId>
 <version>1.0.0-SNAPSHOT</version>
 <dependencies>
-  <dependency>  <!--1-->
+  <dependency>                          <!--1-->
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-core</artifactId>
   </dependency>
 </dependencies>
 <build>
   <plugins>
-    <plugin>  <!--2-->
+    <plugin>                            <!--2-->
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-maven-plugin</artifactId>
     </plugin>
@@ -80,7 +80,7 @@ watertao <1059912278@qq.com>
 ----
 @SpringBootApplication(
    scanBasePackages={
-      "com.mycompany",   // <1>
+      "com.mycompany",                  // <1>
       "io.github.watertao.veigar"
    }
 )
@@ -113,3 +113,31 @@ cors.allowedOrigins = *                 # <4>
 <2> 某些组件需要读取并使用
 <3> 服务端口
 <4> CORS 允许的来源
+
+=== 第一个接口
+
+创建 src/main/java/com/mycompany/myapp/controller/TestController.java
+
+.TestController.java
+[source, java]
+----
+@RestController                         // <1>
+public class TestController {
+    @GetMapping("/test")                // <2>
+    public Object test() {
+        Map map.put("a", "b");
+        return map;
+    }
+}
+----
+<1> 每个 RESTful 接口类都需要使用 `@RestController` 注解
+<2> 每个 RESTful 接口方法都需要使用 `@RequestMapping` 或其子注解
+
+=== 启动项目
+
+通过执行 `spring-boot-maven-plugin` 启动项目：
+
+[source, shell]
+----
+mvn spring-boot:run
+----
