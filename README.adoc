@@ -5,6 +5,7 @@ v1.0, 2019-01-02
 :source-highlighter: coderay
 :sectnums:
 :sectnumlevels: 4
+:icons: font
 
 一个用于开发 RESTful 接口的脚手架，基于 spring boot。
 
@@ -70,8 +71,11 @@ v1.0, 2019-01-02
 </build>
 ----
 
-[source, ruby]
 ----
-require 'sinatra' # <1>
+line of code  // <1>
+line of code  # <2>
+line of code  ;; <3>
 ----
-<1> asdfa
+<1> A callout behind a line comment for C-style languages.
+<2> A callout behind a line comment for Ruby, Python, Perl, etc.
+<3> A callout behind a line comment for Clojure.
