@@ -4,6 +4,7 @@ v1.0, 2019-01-02
 :toc: left
 :source-highlighter: coderay
 :sectnums:
+:sectnumlevels: 4
 
 一个用于开发 RESTful 接口的脚手架，基于 spring boot。
 
@@ -24,16 +25,16 @@ v1.0, 2019-01-02
 │   └── pom.xml
 ----
 
-=== pom.xml
+=== 编辑 pom.xml
 
 在 pom.xml 中引入 veigar 有两种方式：
 
-==== 继承 veigar-parent:
+==== 继承 veigar-parent
 
 .pom.xml
+[source, xml]
 ----
-...
-<parent>
+<parent>  // <1>
      <groupId>io.github.watertao</groupId>
      <artifactId>veigar-parent</artifactId>
      <version>2.1.1-SNAPSHOT</version>
@@ -41,5 +42,36 @@ v1.0, 2019-01-02
 <groupId>com.mycompy</groupId>
 <artifactId>myapp</artifactId>
 <version>1.0.0-SNAPSHOT</version>
-...
 ----
+<1> Library import
+
+==== 依赖 veigar-core
+
+如果项目需要依赖其他 parent，无法依赖 `veigar-parent` ，那么可以通过以下方式达到同样的效果：
+.pom.xml
+[source, xml]
+----
+<groupId>com.mycompy</groupId>
+<artifactId>myapp</artifactId>
+<version>1.0.0-SNAPSHOT</version>
+<dependencies>
+  <dependency>
+    <groupId>io.github.watertao</groupId>
+    <artifactId>veigar-core</artifactId>
+  </dependency>
+</dependencies>
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-maven-plugin</artifactId>
+    </plugin>
+  </plugins>
+</build>
+----
+
+[source, ruby]
+----
+require 'sinatra' # <1>
+----
+<1> asdfa
