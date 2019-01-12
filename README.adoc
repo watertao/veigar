@@ -638,3 +638,209 @@ public interface TestMapper {
 |   |                   └── Test2Mapper.xml
 │   └── pom.xml
 ----
+
+==== 在 service 中使用 mapper
+
+veigar 会扫描带有 `@Mapper` 的接口，并将其注册为 bean，service 类中我们可以注入 mapper 进行
+数据库访问：
+
+[source, java]
+----
+@Service
+public class TestService {
+    @Autowired
+    private TestMapper testMapper;
+}
+----
+
+==== 数据库事务
+
+veigar 使用了基于注解的事务，因此在 service 类中我们得给需要事务的方法添加 `@Transactional` 注解：
+
+[source, java]
+----
+@Service
+public class TestService {
+    @Transactional
+    public void doTest() {
+        ...
+    }
+}
+----
+
+==== 自动生成 Mapper
+
+对数据库表的简单增删改查，我们可以通过 Mybatis-generator ( mbg ) 来自动生成 Mapper 接口，
+Model 以及 映射文件。 +
+首先需要在 pom.xml 中添加 mbg 插件的依赖：
+
+.pom.xml
+[source, xml]
+----
+<build>
+ <plugins>
+  <plugin>
+   <groupId>org.mybatis.generator</groupId>
+   <artifactId>mybatis-generator-maven-plugin</artifactId>
+   <version>1.3.7</version>
+   <configuration>
+    <configurationFile>mbg/generatorConfig.xml</configurationFile>
+   </configuration>
+  </plugin>
+ </plugins>
+</build>
+----
+
+在项目根目录下新建 mbg 相关目录及 generatorConfig.xml 配置文件：
+
+----
+├── myapp
+|   ├── mbg
+|   |   ├── output
+|   |   └── generatorConfig.xml
+|   ├── src
+│   └── pom.xml
+----
+
+.generatorConfig.xml
+[source, XML]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+  <properties resource="application.properties" ></properties>
+  <classPathEntry location="/Users/watertao/.m2/repository/mysql/mysql-connector-java/5.1.47/mysql-connector-java-5.1.47.jar" />    <!--1-->
+  <context id="mbgTables" targetRuntime="MyBatis3">
+    <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"></plugin>
+    <commentGenerator>
+      <property name="suppressAllComments" value="true"/>
+    </commentGenerator>
+    <jdbcConnection driverClass="${spring.datasource.driverClassName}"
+                    connectionURL="${spring.datasource.url}"
+                    userId="${spring.datasource.username}"
+                    password="${spring.datasource.password}">
+    </jdbcConnection>
+    <javaTypeResolver>
+      <property name="forceBigDecimals" value="false"/>
+    </javaTypeResolver>
+    <javaModelGenerator targetPackage="${app.basePackage}.model" targetProject="mbg/output/">
+      <property name="enableSubPackages" value="true"/>
+      <property name="trimStrings" value="true"/>
+    </javaModelGenerator>
+    <sqlMapGenerator targetPackage="mapper" targetProject="mbg/output/">
+      <property name="enableSubPackages" value="true"/>
+    </sqlMapGenerator>
+    <javaClientGenerator type="XMLMAPPER" targetPackage="${app.basePackage}.mapper.autogen" targetProject="mbg/output/">
+      <property name="enableSubPackages" value="true"/>
+    </javaClientGenerator>
+    <table schema="test" tableName="test" enableSelectByExample="true" enableDeleteByExample="true"
+           enableCountByExample="true" enableUpdateByExample="true">        <!--2-->
+    </table>
+  </context>
+</generatorConfiguration>
+----
+<1> 开发环境本地的 jdbc 驱动绝对路径
+<2> 需要生成的表
+
+我们可以复制以上内容到 generatorConfig.xml 文件，设置好 jdbc 驱动的位置，添加所需要生成的表，接着执行以下命令：
+
+----
+mvn mybatis-generator:generate
+----
+
+执行成功后，在 myapp/mbg/output 目录下会生成相应的文件，然后我们将他们拷贝到 myapp/src/main 下对应的位置即可。
+
+[TIP]
+====
+为了避免自动生成的文件覆盖掉手动修改过的文件，强烈建议将自动生成的和手工生成的分别放在不同的目录中，我们可以
+在 com.mycompany.myapp.mapper 下建立 autogen 和 custom 包， 在 resources/mybatis/mapper 下建立
+autogen 和 custom 文件夹，最终的目录结构看起来如下：
+
+----
+├── myapp
+|   ├── mbg
+|   ├── src
+|   |   └── main
+|   |       ├── java
+|   |       |   └── com
+|   |       |       └── mycompany
+|   |       |           └── myapp
+|   |       |               ├── mapper
+|   |       |               |   ├── autogen    // <1>
+|   |       |               |   └── custom     // <2>
+|   |       |               └── model          // <3>
+|   |       └── resources
+|   |           ├── autogen                    // <4>
+|   |           └── custom                     // <5>
+│   └── pom.xml
+----
+<1> 存放 mbg 自动生成的 mapper 接口
+<2> 存放手工编写的 mapper 接口
+<3> 存放自动生成的 model
+<4> 存放 mbg 自动生成的 mapper 映射文件
+<5> 存放手工编写的 mapper 映射文件
+
+====
+
+=== 会话（ Session ）支持
+
+如果项目涉及到用户，那么就需要支持会话，在 veigar 使用会话需要在 pom 中添加组件 `veigar-session` 的依赖：
+
+.pom.xml
+[source, XML]
+----
+<dependency>
+    <groupId>io.github.watertao</groupId>
+    <artifactId>veigar-session</artifactId>
+    <version>2.1.1-SNAPSHOT</version>
+</dependency>
+----
+
+同时还需要依赖一个会话序列化的实现组件，veigar 目前提供了两种方案：
+
+_序列化至内存_::
+对于简单的项目，我们完全可以将 session 保存在 jvm 内存中，采用这种方式需要添加依赖：
+
+.pom.xml
+[source, XML]
+----
+<dependency>
+    <groupId>io.github.watertao</groupId>
+    <artifactId>veigar-session-map</artifactId>
+    <version>2.1.1-SNAPSHOT</version>
+</dependency>
+----
+这种方式虽然简单，但会有两个弊端：+
+首先，负载均衡时无法做到多个应用间共享 session +
+其次，应用重启后，session 将丢失
+
+
+_序列化至 redis_::
+对于需要负载均衡的项目，我们往往会将会话保存在外部缓存中，比如 redis，采用这种方式需要添加依赖：
+
+.pom.xml
+[source, XML]
+----
+<dependency>
+    <groupId>io.github.watertao</groupId>
+    <artifactId>veigar-session-redis</artifactId>
+    <version>2.1.1-SNAPSHOT</version>
+</dependency>
+----
+
+同时我们需要在 `application.properties` 中添加 redis 的连接配置：
+
+.application.properties
+[source, properties]
+----
+spring.redis.host = localhost
+spring.redis.port = 6379
+----
+
+[NOTE]
+====
+需要注意的是，Session 的序列化实现组件只能依赖一个，也就是说不能同时依赖 `veigar-session-map`
+和 `veigar-session.redis`
+====
