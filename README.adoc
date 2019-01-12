@@ -291,8 +291,8 @@ veigar 集成了 Hibernator-validator 作为 bean validation 的实现。所以�
 [source, java]
 ----
 public class User {
-    @NotEmpty
-    private String name;                    // <1>
+    @NotEmpty                                 // <1>
+    private String name;
 
     public String getName() {...}
 
@@ -313,3 +313,328 @@ public Object test(
 }
 ----
 <1> 通过添加注解 `@Valid` 告知 spring boot 对 `user` 对象进行校验，若 JSON 中 name 属性为空，则会抛出校验异常
+
+bean validation 以及 hibernate-validator 所支持的校验注解可参考： +
+https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/#section-builtin-constraints[bean validation] +
+https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/#validator-defineconstraints-hv-constraints[hibernate validator]
+
+==== CORS 跨域
+
+在 `application.properties` 中添加以下配置可支持浏览器跨域访问：
+
+.application.properties
+[source, properties]
+----
+cors.allowedOrigins = http://localhost:8000
+----
+
+通过逗号分隔，可以支持多个域：
+
+.application.properties
+[source, properties]
+----
+cors.allowedOrigins = http://localhost:8000,http://10.10.10.10
+----
+
+或者通过 `*` 支持所有的域：
+
+.application.properties
+[source, properties]
+----
+cors.allowedOrigins = *
+----
+
+
+=== 日志打印
+
+veigar 使用 `slf4j` + `logback` 来输出日志。 +
+在 `application.properties` 中可以通过以下配置设置 root 的输出级别以及输出 pattern：
+
+.application.properties
+[source, properties]
+----
+logging.root.level = INFO                                                   # <1>
+logging.encodePattern = %d{yyyy/MM/dd-HH:mm:ss SSS} %-5level - %msg %n      # <2>
+----
+<1> root 输出级别，缺省为 `INFO`
+<2> 输出的 pattern，缺省为 `%d{yyyy/MM/dd-HH:mm:ss SSS} %-5level - %msg %n`
+
+根据 `application.properties` 中的属性 `spring.profiles.active` 取值不同，日志输出的行为也会有所不同：
+
+_dev_::
+日志只会输出到控制台,不会输出到文件。
+
+_prod_::
+日志只会输出到文件，不会输出到控制台。 +
+在这种模式下，veigar 还支持以下配置：
+
+.application.properties
+[source, properties]
+----
+logging.path = /Users/watertao/Temp/auditlog          # <1>
+logging.file = myapp.log                              # <2>
+logging.splitPattern = yyyy-MM-dd_HH                  # <3>
+logging.maxHistory = 30                               # <4>
+----
+<1> 日志文件输出的目录，缺省为 jar 包所在的目录
+<2> 日志文件的文件名，缺省为 spring.log
+<3> 日志文件按时间切割的模式，缺省为 `yyyy-MM-dd` （即按天切割）
+<4> 日志文件保存的文件个数，缺省为 30 个文件
+
+日志输出 API 使用范例：
+
+[source, java]
+----
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class TestController {
+
+  private static final Logger logger = LoggerFactory.getLogger(TestController.class);
+
+  public void test() {
+    logger.info("hello log");
+  }
+
+}
+----
+
+=== 请求日志
+
+veigar 会打印所有 controller 的请求调用，看起来如下：
+
+----
+2019/01/10-13:13:19 141 INFO  - <--o POST /test
+2019/01/10-13:13:19 142 INFO  - PAYLOAD: {"name":"test2"}
+...
+2019/01/10-13:13:19 142 INFO  - o--> COST: 1ms; PAYLOAD: {"name":"test2"}
+----
+
+如果觉得这种打印风格不满足需求，也可以实现 `io.github.watertao.veigar.core.reqlog.RequestLogger` 接口，
+并将其注册为 spring bean 来替换默认风格。比如：
+
+.MyRequestLogger.java
+[source, java]
+----
+@Component
+public class MyRequestLogger implements RequestLogger {
+
+    private static final Logger logger = LoggerFactory.getLogger(MyRequestLogger.class);
+
+    @Override
+    public void preLog(HttpServletRequest request, Object requestBody) {
+        logger.info("REQUEST RECEIVED:");
+        logger.info("{} {}", request.getMethod(), request.getRequestUri());
+    }
+
+    @Override
+    public void postLog(Object result, Throwable exception, Long cost) {
+        logger.info("RESPONSE: {}", toJson(result));
+    }
+    private String toJson(Object obj) {...}
+}
+----
+
+那么请求日志的输出将会变成：
+
+----
+2019/01/10-13:13:19 141 INFO  - REQUEST RECEIVED:
+2019/01/10-13:13:19 142 INFO  - POST /test
+...
+2019/01/10-13:13:19 142 INFO  - RESPONSE: {"name":"test2"}
+----
+
+
+=== 异常处理
+
+在 veigar 项目中，我们不必在 controller 中捕获异常并将其转化为 json。我们只需要直接抛出异常即可，
+veigar 会将其转化为合适的 json。 +
+veigar 提供了以下几个常用的运行时异常类：
+
+
+[cols="1,2,1", options="header"]
+|===
+|异常类
+|推荐使用场景
+|HTTP 状态码
+
+|*BadRequestException*
+|当请求的参数有问题时，比如格式有误
+|400
+
+|*ForbiddenException*
+|当请求被禁止访问时，比如 A 分公司的用户想要访问 B 分公司的数据，若是业务要求禁止，那么就可以抛出此类异常
+|401
+
+|*ConflictException*
+|当资源与预期状态有冲突时，比如针对一个尚未测试的接口进行审核通过的请求调用，按照逻辑是不允许的，这时候就可以提示状态冲突。
+|409
+
+|*NotFoundException*
+|访问了一个不存在的资源，比如对一个 ID为3的接口进行修改操作，而实际上库里并不存在 ID 为 3 的接口
+|404
+
+|*UnauthenticatedException*
+|系统无法识别当前用户的时候。比如 session 过期，登录时密码错误等
+|403
+
+|*HttpStatusException*
+|如果以上异常都不满足场景时，可使用此异常，并设定一个状态码即可。
+|自定义
+
+|*InternalServerException*
+|提对于运行时产生的一些非预期异常，比如 NullPoint，数据库访问异常等，框架最终都被将其包装成此错误
+|500
+
+|===
+
+任何异常最终都会被转成以下格式的 json：
+
+[source, json]
+----
+{
+    "status": 403,                      // <1>
+    "error": "Forbidden",               // <2>
+    "message": "未登录",                 // <3>
+    "verbose": null                     // <4>
+}
+----
+<1> 异常对应的状态码
+<2> 状态码对应的标准描述语（与 HTTP 规范兼容）
+<3> 自定义的异常描述
+<4> 附加的异常描述补充
+
+[NOTE]
+====
+对于客户端而言，状态码为 `2xx` ( 如 `200` / `201` / `204` ) 的响应就代表着请求的处理是成功的，非 `2xx` 的响应即代表处理失败。
+====
+
+
+=== 消息国际化
+
+若要在 veigar 项目中使用消息国际化的特性，需要在 src/main/resources/message 下创建不同语言的
+消息资源文件，下面以中文和英文为例：
+
+----
+├── myapp
+|   ├── src
+|   |   └── main
+|   |       ├── java
+|   |       └── resources
+|   |           └── message
+|   |               ├── message_en.properties           // <1>
+|   |               └── message_zh.properties           // <2>
+│   └── pom.xml
+----
+<1> 英文消息资源文件
+<2> 中文消息资源文件
+
+分别为两个资源文件添加属性名为 `test.name` 的消息：
+
+.message_en.properties
+[source, properties]
+----
+test.name = I'm English
+----
+
+.message_zh.properties
+[source, properties]
+----
+test.name = 我是中文的
+----
+
+在需要国际化消息的地方，可以通过注入 `io.github.watertao.veigar.core.message.LocaleMessage` 来使用：
+
+[source, java]
+----
+@Component
+public class Test {
+
+    @Autowired
+    private LocaleMessage localeMessage;                          // <1>
+
+    public void test() {
+        System.out.println(localeMessage.m("test.name"));         // <2>
+    }
+
+}
+----
+<1> 注入 LocaleMessage bean
+<2> 调用 localeMessage 的 m 方法，将消息属性名作为参数传入即可
+
+veigar 会根据 HTTP 请求头部中的 `Accept-Language` 来决定使用哪种语言的消息资源文件。
+
+
+=== 数据库访问
+
+访问数据库是绝大部分项目的需求，我们需要添加组件 `veigar-db` 的依赖；
+
+.pom.xml
+[source, xml]
+----
+<dependency>
+    <groupId>io.github.watertao</groupId>
+    <artifactId>veigar-db</artifactId>
+    <version>2.1.1-SNAPSHOT</version>
+</dependency>
+----
+
+veigar-db 使用 mybatis 作为 ORM 框架， 使用 druid 作为连接池。 +
+下面以 mysql 为例，描述如何使项目支持数据库访问。 +
+除了上面的 `veigar-db` ，我们还需要添加 jdbc 驱动的依赖：
+
+.pom.xml
+[source, xml]
+----
+<dependency>
+     <groupId>mysql</groupId>
+     <artifactId>mysql-connector-java</artifactId>
+     <version>5.1.47</version>
+</dependency>
+----
+
+在 `application.properties` 中添加数据库相关的配置：
+
+.application.properties
+[source, properties]
+----
+spring.datasource.driverClassName = com.mysql.jdbc.Driver
+spring.datasource.url = jdbc:mysql://localhost:3306/test?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+spring.datasource.username = test
+spring.datasource.password = test
+spring.datasource.maxActive = 20          # <1>
+----
+<1> 连接池的最大连接数
+
+做完了以上这些工作，我们就可以在项目中使用 mybatis 进行开发了。
+
+==== Mapper 接口
+
+Mapper 接口可以放在项目 package ( `com.mycompany.myapp` ) 下的任意目录中，veigar 通过
+`@Mapper` 注解来识别 Mapper 接口：
+
+[source, java]
+----
+@Mapper       // <1>
+public interface TestMapper {
+    int insertTest(Test test);
+}
+----
+<1> `@Mapper` 注解
+
+==== Mapper XML 映射文件
+
+映射文件 *必须* 放在 src/main/resources/mybatis/mapper 文件夹下：
+
+----
+├── myapp
+|   ├── src
+|   |   └── main
+|   |       ├── java
+|   |       └── resources
+|   |           └── mybatis
+|   |               └── mapper
+|   |                   ├── Test1Mapper.xml
+|   |                   └── Test2Mapper.xml
+│   └── pom.xml
+----
