@@ -750,6 +750,7 @@ Model 以及 映射文件。 +
     </javaClientGenerator>
     <table schema="test" tableName="test" enableSelectByExample="true" enableDeleteByExample="true"
            enableCountByExample="true" enableUpdateByExample="true">        <!--2-->
+           <generatedKey sqlStatement="Mysql" column="id" identity="true"></generatedKey>
     </table>
   </context>
 </generatorConfiguration>
