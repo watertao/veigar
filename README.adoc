@@ -798,6 +798,68 @@ autogen 和 custom 文件夹，最终的目录结构看起来如下：
 
 ====
 
+==== 分页处理
+
+veigar 使用 `pagehelper` 进行分页的处理，要使用该功能需要在 `application.properties` 中指定
+sql 方言，缺省为 `mysql`：
+
+.application.properties
+[source, properties]
+----
+pagehelper.helperDialect = mysql
+----
+
+目前支持的方言包括：`db2`,`hsqldb`,`informix`,`mysql`,`oracle`,`sqlserver` 。 +
+
+在 service 中使用分页很简单：
+
+[source, java]
+----
+public class TestService {
+  @Autowired
+  private UserMapper userMapper;
+
+  public void test(int pageIdx, int pageSize, String name) {
+    // 假设 pageIdx = 0, pageSize = 10
+    PageHelper.startPage(pageIdx, pageSize);                  // <1>
+
+    List<User> users = userMapper.findUsersByName(name);      // <2>
+
+    PageInfo<User> pageInfo = new PageInfo<>(users);          // <3>
+
+    // pageInfo.getTotal() = 满足条件的记录总数
+    // pageInfo.getList() = 当前页返回的 10 条记录
+    // ...
+  }
+
+}
+----
+<1> 在进行任意的 sql 查询之前，先通过 `PageHelper.startPage` 设置本次分页的起始页和页大小
+<2> 执行 Mapper 的查询方法
+<3> 用 `PageInfo` 类构建一个实例，传入上一步返回的结果集，最终获得的就是一个分页结果对象
+
+
+
+==== 在日志中打印 sql
+
+在 veigar 中打印 sql 需要在 `application.properties` 中将 Mapper 类的日志级别调整到 DEBUG，
+比如：
+
+.application.properties
+[source, properties]
+----
+logging.level.com.mycompany.myapp.mapper = DEBUG
+----
+
+这会让 `com.mycompany.myapp.mapper` 包下所有的 Mapper 调用都打印出 sql：
+
+----
+2019/01/14-16:57:29 652 DEBUG - ==>  Preparing: SELECT count(0) FROM test t WHERE t.name LIKE ?
+2019/01/14-16:57:29 652 DEBUG - ==> Parameters: 上海(String)
+2019/01/14-16:57:29 653 DEBUG - <==      Total: 1
+----
+
+
 === 会话（ Session ）支持
 
 如果项目涉及到用户，那么就需要支持会话，在 veigar 使用会话需要在 pom 中添加组件 `veigar-session` 的依赖：
