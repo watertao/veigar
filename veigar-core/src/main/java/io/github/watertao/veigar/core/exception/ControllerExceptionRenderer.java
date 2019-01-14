@@ -10,6 +10,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -29,6 +30,8 @@ public class ControllerExceptionRenderer {
           return handleHttpMessageNotReadableException(response, (HttpMessageNotReadableException) e);
         } else if (e instanceof MethodArgumentNotValidException) {
           return handleMethodArgumentNotValidException(response, (MethodArgumentNotValidException) e);
+        } else if (e instanceof MissingServletRequestParameterException) {
+          return handleMissingServletRequestParameterException(response, (MissingServletRequestParameterException) e);
         } else {
           return handleException(response, e);
         }
@@ -59,6 +62,12 @@ public class ControllerExceptionRenderer {
     return new ExceptionView(status, "message not readable");
   }
 
+  private ExceptionView handleMissingServletRequestParameterException(HttpServletResponse res, MissingServletRequestParameterException exception) {
+    HttpStatus status = HttpStatus.BAD_REQUEST;
+    res.setStatus(status.value());
+
+    return new ExceptionView(status, "missing query parameter [ " + exception.getParameterName() + " ]");
+  }
 
   private ExceptionView handleMethodArgumentNotValidException(HttpServletResponse res, MethodArgumentNotValidException exception) {
     List<ObjectError> errors = exception.getBindingResult().getAllErrors();
