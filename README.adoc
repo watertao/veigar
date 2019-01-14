@@ -1190,7 +1190,7 @@ logging.maxHistory = 30
 # 运行模式，在开发环境设置为 dev, 在生产模式设置为 prod
 spring.profiles.active = dev
 # base package
-app.basePackage = com.htsec.apifusion
+app.basePackage = com.mycompany.myapp
 # 服务端口，缺省 8080
 server.port = 8080
 # CORS 允许的域，支持逗号分割多个域
@@ -1201,7 +1201,7 @@ logging.root.level = INFO
 logging.encodePattern = %d{yyyy/MM/dd-HH:mm:ss SSS} %-5level - %msg %n
 # 在运行模式为 dev 时，只向控制台输出日志，而为 prod 时，只向文件输出日志，当设置为 prod 时还支持以下配置
 # 日志文件的输出目录，缺省输出到 jar 同级目录
-logging.path = /Users/watertao/Temp/myapp
+logging.path = /myapp/log
 # 日志文件的文件名，缺省为 spring.log
 logging.file = myapp.log
 # 日志文件按时间切割的模式，缺省为 yyyy-MM-dd
