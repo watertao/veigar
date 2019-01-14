@@ -85,4 +85,10 @@
     <module>veigar-auth</module>
   </modules>
 
+  <distributionManagement>
+    <repository>
+      <id>maven-shapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    </repository>
+  </distributionManagement>
 </project>
