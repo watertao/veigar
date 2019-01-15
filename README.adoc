@@ -1200,7 +1200,7 @@ mvn clean package
 
 [source, bash]
 ----
-nohup java -jar myapp-x.x.x-SNAPSHOT.jar >/dev/null &
+nohup java -jar myapp-x.x.x-SNAPSHOT.jar >/dev/null 2>&1 &
 ----
 
 
