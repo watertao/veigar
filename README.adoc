@@ -12,7 +12,7 @@ watertao <1059912278@qq.com>
 
 == 贡献者
 
-曾利（zengli），吴涛（watertao）
+曾利（henry），吴涛（watertao）
 
 == 快速入门
 
