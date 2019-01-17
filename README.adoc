@@ -670,12 +670,21 @@ Mapper 接口可以放在项目 package ( `com.mycompany.myapp` ) 下的任意�
 
 [source, java]
 ----
-@Mapper       // <1>
-public interface TestMapper {
-    int insertTest(Test test);
+package com.mycompany.myapp.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
+
+@Component("com.mycompany.myapp.mapper.MyCustomMapper")         // <1>
+@Mapper                                                         // <2>
+public interface MyCustomMapper {
+  ...
 }
 ----
-<1> `@Mapper` 注解
+<1> `@Component` 注解是为了给 Mapper 定义一个 bean name，强烈建议设置成接口的全限定名，这么做可以避免不同 package 下相同类名的 Mapper 接口产生冲突。
+<2> `@Mapper` 注解
+
+
 
 ==== Mapper XML 映射文件
 
@@ -816,27 +825,6 @@ mvn mybatis-generator:generate
 
 执行成功后，在 myapp/mbg/output 目录下会生成相应的文件，然后我们将他们拷贝到 myapp/src/main 下对应的位置即可。
 
-[NOTE]
-====
-手动添加的 Mapper 接口必须要添加 `@Mapper` 和 `@Component` 注解，且 `@Component` 注解的名称设定为 Mapper 接口的全限定名：
-
-[source, java]
-----
-package com.mycompany.myapp.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Component;
-
-@Component("com.mycompany.myapp.mapper.MyCustomMapper")
-@Mapper
-public interface MyCustomMapper {
-  ...
-}
-----
-这么做的目的主要是为了避免不同 package 下相同类名的 Mapper 接口产生冲突。
-
-
-====
 
 [TIP]
 ====
