@@ -1559,9 +1559,15 @@ spring.datasource.maxActive = 20          <i class="conum" data-value="1"></i><b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Mapper</span>       <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">interface</span> <span class="class">TestMapper</span> {
-    <span class="type">int</span> insertTest(Test test);
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.mycompany.myapp.mapper</span>;
+
+<span class="keyword">import</span> <span class="include">org.apache.ibatis.annotations.Mapper</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.stereotype.Component</span>;
+
+<span class="annotation">@Component</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">com.mycompany.myapp.mapper.MyCustomMapper</span><span class="delimiter">&quot;</span></span>)         <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Mapper</span>                                                         <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="directive">public</span> <span class="type">interface</span> <span class="class">MyCustomMapper</span> {
+  ...
 }</code></pre>
 </div>
 </div>
@@ -1569,6 +1575,10 @@ spring.datasource.maxActive = 20          <i class="conum" data-value="1"></i><b
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>@Component</code> 注解是为了给 Mapper 定义一个 bean name，强烈建议设置成接口的全限定名，这么做可以避免不同 package 下相同类名的 Mapper 接口产生冲突。</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td><code>@Mapper</code> 注解</td>
 </tr>
 </table>
@@ -1735,37 +1745,6 @@ Model 以及 映射文件。<br>
 </div>
 <div class="paragraph">
 <p>执行成功后，在 myapp/mbg/output 目录下会生成相应的文件，然后我们将他们拷贝到 myapp/src/main 下对应的位置即可。</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>手动添加的 Mapper 接口必须要添加 <code>@Mapper</code> 和 <code>@Component</code> 注解，且 <code>@Component</code> 注解的名称设定为 Mapper 接口的全限定名：</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.mycompany.myapp.mapper</span>;
-
-<span class="keyword">import</span> <span class="include">org.apache.ibatis.annotations.Mapper</span>;
-<span class="keyword">import</span> <span class="include">org.springframework.stereotype.Component</span>;
-
-<span class="annotation">@Component</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">com.mycompany.myapp.mapper.MyCustomMapper</span><span class="delimiter">&quot;</span></span>)
-<span class="annotation">@Mapper</span>
-<span class="directive">public</span> <span class="type">interface</span> <span class="class">MyCustomMapper</span> {
-  ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>这么做的目的主要是为了避免不同 package 下相同类名的 Mapper 接口产生冲突。</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -2495,7 +2474,7 @@ auditLog.ip.header =  X-Real-IP</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-01-17 16:11:23 +0800
+Last updated 2019-01-17 16:20:47 +0800
 </div>
 </div>
 </body>
