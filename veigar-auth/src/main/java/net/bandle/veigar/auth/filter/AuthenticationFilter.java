@@ -1,4 +1,4 @@
-package net.bandle.veigar.rsrv.auth.filter;
+package net.bandle.veigar.auth.filter;
 
 import io.github.watertao.veigar.core.exception.UnauthenticatedException;
 import io.github.watertao.veigar.core.filter.AbstractJsonRequestAwareFilter;

@@ -62,6 +62,11 @@
         <version>${veigar.version}</version>
       </dependency>
       <dependency>
+        <groupId>io.github.watertao</groupId>
+        <artifactId>veigar-mbg-plugin</artifactId>
+        <version>${veigar.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.alibaba</groupId>
         <artifactId>druid</artifactId>
         <version>${druid.version}</version>
@@ -83,6 +88,7 @@
     <module>veigar-session-redis</module>
     <module>veigar-session-map</module>
     <module>veigar-auth</module>
+    <module>veigar-mbg-plugin</module>
   </modules>
 
   <distributionManagement>

@@ -16,6 +16,40 @@ watertao <1059912278@qq.com>
 
 == 快速入门
 
+=== Maven settings.xml 配置
+
+由于目前 veigar 尚未发布 release 版，只能使用 snapshot 版，所以在使用前我们需要对 settins.xml 做一些配置：
+
+.settings.xml
+[source, xml]
+----
+<profiles>
+  <profile>
+     <id>allow-snapshots</id>
+        <activation><activeByDefault>true</activeByDefault></activation>
+     <repositories>
+       <repository>
+         <id>snapshots-repo</id>
+         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+         <releases><enabled>false</enabled></releases>
+         <snapshots><enabled>true</enabled></snapshots>
+       </repository>
+     </repositories>
+   </profile>
+</profiles>
+----
+
+==== nexus 私服
+
+若企业内部使用了 nexus 私服，为了让 nexus 支持 snapshot 包的代理下载，我们需要对 nexus 做如下配置：
+
+1. 新建一个类型为 proxy 的 respository
+2. 该 repository 的 policy 设置为 Snapshot
+3. remote storage location 设置为 https://oss.sonatype.org/content/repositories/snapshots
+4. download remote indexes 设置为 true
+5. 添加完成后，在 public repositories 中把上面新建的 repository 加进去即可
+
+
 === 新建 Maven 项目
 
 ----
@@ -204,6 +238,10 @@ veigar 是在 spring boot 基础上进一步封装了开发 RESTful 接口时常
 |*veigar-audit-log*
 |提供了用户日志审计相关的扩展点
 |veigar-session
+
+|*veigar-mbg-plugin*
+|提供了 mybatis generator 的插件
+|
 
 |===
 
@@ -703,6 +741,13 @@ Model 以及 映射文件。 +
    <configuration>
     <configurationFile>mbg/generatorConfig.xml</configurationFile>
    </configuration>
+   <dependencies>
+     <dependency>
+       <groupId>io.github.watertao</groupId>
+       <artifactId>veigar-mbg-plugin</artifactId>
+       <version>2.1.1-SNAPSHOT</version>
+     </dependency>
+   </dependencies>
   </plugin>
  </plugins>
 </build>
@@ -731,6 +776,7 @@ Model 以及 映射文件。 +
   <classPathEntry location="/Users/watertao/.m2/repository/mysql/mysql-connector-java/5.1.47/mysql-connector-java-5.1.47.jar" />    <!--1-->
   <context id="mbgTables" targetRuntime="MyBatis3">
     <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"></plugin>
+    <plugin type="io.github.watertao.veigar.mbgplugin.ComponentAnnotationPlugin"></plugin>
     <commentGenerator>
       <property name="suppressAllComments" value="true"/>
     </commentGenerator>
@@ -769,6 +815,28 @@ mvn mybatis-generator:generate
 ----
 
 执行成功后，在 myapp/mbg/output 目录下会生成相应的文件，然后我们将他们拷贝到 myapp/src/main 下对应的位置即可。
+
+[NOTE]
+====
+手动添加的 Mapper 接口必须要添加 `@Mapper` 和 `@Component` 注解，且 `@Component` 注解的名称设定为 Mapper 接口的全限定名：
+
+[source, java]
+----
+package com.mycompany.myapp.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
+
+@Component("com.mycompany.myapp.mapper.MyCustomMapper")
+@Mapper
+public interface MyCustomMapper {
+  ...
+}
+----
+这么做的目的主要是为了避免不同 package 下相同类名的 Mapper 接口产生冲突。
+
+
+====
 
 [TIP]
 ====
