@@ -39,7 +39,7 @@ public class RequestAspect {
     private ControllerExceptionRenderer exceptionRenderer;
 
     @Around("controller() && allPubOp() && (reqAnno() || cReqAnno())")
-    public Object logAround(ProceedingJoinPoint joinPoint) {
+    public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
       Long processStartMs = System.currentTimeMillis();
 
       // log request
@@ -52,13 +52,13 @@ public class RequestAspect {
       }
 
       // execute
-      Object result;
+      Object result = null;
       Throwable exception = null;
       try {
           result = joinPoint.proceed();
       } catch (Throwable e) {
           HttpServletResponse res = HttpRequestHelper.getCurrentResponse();
-          result = exceptionRenderer.renderException(e, res);
+          // result = exceptionRenderer.renderException(e, res);
           exception = e;
       }
 
@@ -90,6 +90,9 @@ public class RequestAspect {
         }
       }
 
+      if (exception != null) {
+        throw exception;
+      }
 
       return result;
     }

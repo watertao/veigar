@@ -589,13 +589,13 @@ veigar 提供了以下几个常用的运行时异常类：
 .message_en.properties
 [source, properties]
 ----
-test.name = I'm English
+test.name = I'm English，param_1 is {0} and param_2 is {1}
 ----
 
 .message_zh.properties
 [source, properties]
 ----
-test.name = 我是中文的
+test.name = 我是中文的，参数1的值是 {0}，参数2的值是 {1}
 ----
 
 在需要国际化消息的地方，可以通过注入 `io.github.watertao.veigar.core.message.LocaleMessage` 来使用：
@@ -606,10 +606,10 @@ test.name = 我是中文的
 public class Test {
 
     @Autowired
-    private LocaleMessage localeMessage;                          // <1>
+    private LocaleMessage localeMessage;                                                    // <1>
 
     public void test() {
-        System.out.println(localeMessage.m("test.name"));         // <2>
+        System.out.println(localeMessage.m("test.name", new Object[] { "a", "b" }));        // <2>
     }
 
 }
@@ -617,7 +617,23 @@ public class Test {
 <1> 注入 LocaleMessage bean
 <2> 调用 localeMessage 的 m 方法，将消息属性名作为参数传入即可
 
-veigar 会根据 HTTP 请求头部中的 `Accept-Language` 来决定使用哪种语言的消息资源文件。
+veigar 会根据 HTTP 请求头部中的 `Accept-Language` 来决定使用哪种语言的消息资源文件。 +
+上例中若语言为
+
+中文::
+
+输出为：
+----
+我是中文的，参数1的值是 a，参数2的值是 b
+----
+
+英文::
+
+输出为：
+----
+I'm English，param_1 is a and param_2 is b
+----
+
 
 
 === 数据库访问

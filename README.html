@@ -1454,13 +1454,13 @@ veigar 提供了以下几个常用的运行时异常类：</p>
 <div class="listingblock">
 <div class="title">message_en.properties</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="properties">test.name = I'm English</code></pre>
+<pre class="CodeRay highlight"><code data-lang="properties">test.name = I'm English，param_1 is {0} and param_2 is {1}</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">message_zh.properties</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="properties">test.name = 我是中文的</code></pre>
+<pre class="CodeRay highlight"><code data-lang="properties">test.name = 我是中文的，参数1的值是 {0}，参数2的值是 {1}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1472,10 +1472,10 @@ veigar 提供了以下几个常用的运行时异常类：</p>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Test</span> {
 
     <span class="annotation">@Autowired</span>
-    <span class="directive">private</span> LocaleMessage localeMessage;                          <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="directive">private</span> LocaleMessage localeMessage;                                                    <i class="conum" data-value="1"></i><b>(1)</b>
 
     <span class="directive">public</span> <span class="type">void</span> test() {
-        <span class="predefined-type">System</span>.out.println(localeMessage.m(<span class="string"><span class="delimiter">&quot;</span><span class="content">test.name</span><span class="delimiter">&quot;</span></span>));         <i class="conum" data-value="2"></i><b>(2)</b>
+        <span class="predefined-type">System</span>.out.println(localeMessage.m(<span class="string"><span class="delimiter">&quot;</span><span class="content">test.name</span><span class="delimiter">&quot;</span></span>, <span class="keyword">new</span> <span class="predefined-type">Object</span><span class="type">[]</span> { <span class="string"><span class="delimiter">&quot;</span><span class="content">a</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">b</span><span class="delimiter">&quot;</span></span> }));        <i class="conum" data-value="2"></i><b>(2)</b>
     }
 
 }</code></pre>
@@ -1494,7 +1494,34 @@ veigar 提供了以下几个常用的运行时异常类：</p>
 </table>
 </div>
 <div class="paragraph">
-<p>veigar 会根据 HTTP 请求头部中的 <code>Accept-Language</code> 来决定使用哪种语言的消息资源文件。</p>
+<p>veigar 会根据 HTTP 请求头部中的 <code>Accept-Language</code> 来决定使用哪种语言的消息资源文件。<br>
+上例中若语言为</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">中文</dt>
+<dd>
+<p>输出为：</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>我是中文的，参数1的值是 a，参数2的值是 b</pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">英文</dt>
+<dd>
+<p>输出为：</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>I'm English，param_1 is a and param_2 is b</pre>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -2474,7 +2501,7 @@ auditLog.ip.header =  X-Real-IP</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-01-17 16:20:47 +0800
+Last updated 2019-01-18 15:48:21 +0800
 </div>
 </div>
 </body>
