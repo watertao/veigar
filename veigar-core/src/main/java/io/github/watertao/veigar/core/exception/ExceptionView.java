@@ -1,9 +1,11 @@
 package io.github.watertao.veigar.core.exception;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExceptionView {
 
   private Integer status;
