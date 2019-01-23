@@ -400,6 +400,29 @@ cors.allowedOrigins = *
 ----
 
 
+==== JSON pretty print
+
+默认情况下，JSON 被序列化为单行，虽然紧凑，但对人类并不友好，我们可以通过配置以下参数让 json 序列化时更美观：
+
+.application.properties
+[source, properties]
+----
+spring.jackson.serialization.indent_output = true
+----
+
+
+==== 日期
+
+veigar 会将日期以 ISO-8601 兼容的格式来序列化日期，如 `2019-01-09T10:41:44.000+0800` ，我们可以通过以下参数设置时区及格式：
+
+.application.properties
+[source, properties]
+----
+spring.jackson.date-format = yyyy-MM-dd HH:mm:ss
+spring.jackson.time-zone = GMT+8
+----
+
+
 === 日志打印
 
 veigar 使用 `slf4j` + `logback` 来输出日志。 +
