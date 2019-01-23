@@ -449,7 +449,7 @@ _prod_::
 .application.properties
 [source, properties]
 ----
-logging.path = /myapp/log                              # <1>
+logging.path = /myapp/log                             # <1>
 logging.file = myapp.log                              # <2>
 logging.splitPattern = yyyy-MM-dd_HH                  # <3>
 logging.maxHistory = 30                               # <4>
