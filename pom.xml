@@ -22,6 +22,7 @@
     <veigar.version>2.1.1-SNAPSHOT</veigar.version>
     <druid.version>1.1.12</druid.version>
     <mybatisStarter.version>1.3.2</mybatisStarter.version>
+    <swagger.version>2.9.2</swagger.version>
   </properties>
 
   <dependencyManagement>
@@ -67,6 +68,11 @@
         <version>${veigar.version}</version>
       </dependency>
       <dependency>
+        <groupId>io.github.watertao</groupId>
+        <artifactId>veigar-swagger</artifactId>
+        <version>${veigar.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.alibaba</groupId>
         <artifactId>druid</artifactId>
         <version>${druid.version}</version>
@@ -75,6 +81,16 @@
         <groupId>org.mybatis.spring.boot</groupId>
         <artifactId>mybatis-spring-boot-starter</artifactId>
         <version>${mybatisStarter.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger2</artifactId>
+        <version>${swagger.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger-ui</artifactId>
+        <version>${swagger.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -89,6 +105,7 @@
     <module>veigar-session-map</module>
     <module>veigar-auth</module>
     <module>veigar-mbg-plugin</module>
+    <module>veigar-swagger</module>
   </modules>
 
   <distributionManagement>

@@ -599,8 +599,14 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 <li><a href="#_构建部署包">5. 构建部署包</a></li>
 <li><a href="#_环境配置">6. 环境配置</a></li>
-<li><a href="#_单元测试">7. 单元测试</a></li>
-<li><a href="#_完整配置参考">8. 完整配置参考</a></li>
+<li><a href="#_接口文档">7. 接口文档</a>
+<ul class="sectlevel2">
+<li><a href="#_swagger_接口文档">7.1. swagger 接口文档</a></li>
+<li><a href="#_spring_rest_doc_接口文档">7.2. spring REST doc 接口文档</a></li>
+</ul>
+</li>
+<li><a href="#_单元测试">8. 单元测试</a></li>
+<li><a href="#_完整配置参考">9. 完整配置参考</a></li>
 </ul>
 </div>
 </div>
@@ -962,6 +968,11 @@ cors.allowedOrigins = *                 <i class="conum" data-value="4"></i><b>(
 <td class="tableblock halign-left valign-top"><p class="tableblock">提供了 mybatis generator 的插件</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>veigar-swagger</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">提供了 swagger 生成 API 文档的特性</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1241,7 +1252,7 @@ logging.encodePattern = %d{yyyy/MM/dd-HH:mm:ss SSS} %-5level - %msg %n      <i c
 <div class="listingblock">
 <div class="title">application.properties</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="properties">logging.path = /myapp/log                              <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="CodeRay highlight"><code data-lang="properties">logging.path = /myapp/log                             <i class="conum" data-value="1"></i><b>(1)</b>
 logging.file = myapp.log                              <i class="conum" data-value="2"></i><b>(2)</b>
 logging.splitPattern = yyyy-MM-dd_HH                  <i class="conum" data-value="3"></i><b>(3)</b>
 logging.maxHistory = 30                               <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
@@ -2470,7 +2481,200 @@ logging.maxHistory = 30</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_单元测试">7. 单元测试</h2>
+<h2 id="_接口文档">7. 接口文档</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_swagger_接口文档">7.1. swagger 接口文档</h3>
+<div class="paragraph">
+<p>要使用 swagger 接口文档，需要添加组件 <code>veigar-swagger</code> 的依赖：</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>io.github.watertao<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>veigar-swagger<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.1.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>同时在 <code>application.properties</code> 中启用 swagger 相关的配置：</p>
+</div>
+<div class="listingblock">
+<div class="title">application.properties</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties"># 是否启用 swagger 接口文档
+swagger.enable = true
+# swagger 扫描哪些包下的 controller
+swagger.api.basePackage = com.mycompany
+# 接口文档的标题
+swagger.api.title = Myapp Management Platform API Reference
+# 接口的版本
+swagger.api.version = 1.0.0</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_spring_rest_doc_接口文档">7.2. spring REST doc 接口文档</h3>
+<div class="paragraph">
+<p>spring REST doc 是 spring 提供的文档生成组件，它基于单元测试，要使用该特性需要在 <code>pom.xml</code> 中
+添加以下内容：</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="XML"><span class="tag">&lt;dependencies&gt;</span>
+  <span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>spring-boot-starter-test<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;/dependency&gt;</span>
+  <span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>org.springframework.restdocs<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>spring-restdocs-mockmvc<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.0.3.RELEASE<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+  <span class="tag">&lt;/dependency&gt;</span>
+<span class="tag">&lt;/dependencies&gt;</span>
+
+<span class="tag">&lt;build&gt;</span>
+  <span class="tag">&lt;plugins&gt;</span>
+    <span class="tag">&lt;plugin&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>org.asciidoctor<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>asciidoctor-maven-plugin<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;version&gt;</span>1.5.3<span class="tag">&lt;/version&gt;</span>
+      <span class="tag">&lt;executions&gt;</span>
+        <span class="tag">&lt;execution&gt;</span>
+          <span class="tag">&lt;id&gt;</span>generate-docs<span class="tag">&lt;/id&gt;</span>
+          <span class="tag">&lt;phase&gt;</span>prepare-package<span class="tag">&lt;/phase&gt;</span>
+          <span class="tag">&lt;goals&gt;</span>
+            <span class="tag">&lt;goal&gt;</span>process-asciidoc<span class="tag">&lt;/goal&gt;</span>
+          <span class="tag">&lt;/goals&gt;</span>
+          <span class="tag">&lt;configuration&gt;</span>
+            <span class="tag">&lt;backend&gt;</span>html<span class="tag">&lt;/backend&gt;</span>
+            <span class="tag">&lt;doctype&gt;</span>book<span class="tag">&lt;/doctype&gt;</span>
+            <span class="tag">&lt;attributes&gt;</span>
+              <span class="tag">&lt;style</span><span class="attribute-name">sheet</span><span class="tag">&gt;</span><span class="inline"><span class="tag">asciidoc-style</span><span class="class">.css</span><span class="error">&lt;</span>/<span class="tag">stylesheet</span>&gt;             <i class="conum" data-value="1"></i><b>(1)</b>
+            <span class="error">&lt;</span>/<span class="tag">attributes</span>&gt;
+          <span class="error">&lt;</span>/<span class="tag">configuration</span>&gt;
+        <span class="error">&lt;</span>/<span class="tag">execution</span>&gt;
+      <span class="error">&lt;</span>/<span class="tag">executions</span>&gt;
+      <span class="error">&lt;</span><span class="tag">dependencies</span>&gt;
+        <span class="error">&lt;</span><span class="tag">dependency</span>&gt;
+          <span class="error">&lt;</span><span class="tag">groupId</span>&gt;<span class="tag">org</span><span class="class">.springframework</span><span class="class">.restdocs</span><span class="error">&lt;</span>/<span class="tag">groupId</span>&gt;
+          <span class="error">&lt;</span><span class="tag">artifactId</span>&gt;<span class="tag">spring-restdocs-asciidoctor</span><span class="error">&lt;</span>/<span class="tag">artifactId</span>&gt;
+          <span class="error">&lt;</span><span class="tag">version</span>&gt;<span class="float">2.0</span><span class="class">.3</span><span class="class">.RELEASE</span><span class="error">&lt;</span>/<span class="tag">version</span>&gt;
+        <span class="error">&lt;</span>/<span class="tag">dependency</span>&gt;
+      <span class="error">&lt;</span>/<span class="tag">dependencies</span>&gt;
+    <span class="error">&lt;</span>/<span class="tag">plugin</span>&gt;
+  <span class="error">&lt;</span>/<span class="tag">plugins</span>&gt;
+<span class="error">&lt;</span>/<span class="tag">build</span>&gt;</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>veigar 提供了一个自定义的 css 样式，可从本项目源码的 assets 目录下获得，该 css 主要是对字体部分做了改动，以更适合中文显示。</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>编写单元测试：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(SpringRunner.class)
+<span class="annotation">@SpringBootTest</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Test</span> {
+
+  <span class="annotation">@Rule</span>
+  <span class="directive">public</span> JunitRestDocumentation restDocumentation = <span class="keyword">new</span> JunitRestDocumentation();
+
+  <span class="directive">protected</span> MockMvc mockMvc;
+
+  <span class="annotation">@Autowired</span>
+  <span class="directive">private</span> WebApplicationContext context;
+
+  <span class="annotation">@Before</span>
+  <span class="directive">public</span> <span class="type">void</span> setUp() {
+    <span class="local-variable">this</span>.mockMvc = MockMvcBuilders.webAppContextSetup(<span class="local-variable">this</span>.context)
+      .apply(documentationConfiguration(<span class="local-variable">this</span>.restDocumentation))
+      .build();
+  }
+
+  <span class="annotation">@Test</span>
+  <span class="annotation">@Transactional</span>
+  <span class="annotation">@Rollback</span>
+  <span class="directive">public</span> <span class="type">void</span> get() {
+
+    <span class="local-variable">this</span>.mockMvc.perform(
+      get(<span class="string"><span class="delimiter">&quot;</span><span class="content">/a/b/{id}</span><span class="delimiter">&quot;</span></span>, <span class="integer">123</span>)
+      .accept(MediaType.APPLICATION_JSON)
+    )
+    .andExpect(status().isOk())
+    .andDo(document(<span class="string"><span class="delimiter">&quot;</span><span class="content">get-xx</span><span class="delimiter">&quot;</span></span>,
+      pathParameters(
+        parameterWithName(<span class="string"><span class="delimiter">&quot;</span><span class="content">id</span><span class="delimiter">&quot;</span></span>).description(<span class="string"><span class="delimiter">&quot;</span><span class="content">ID</span><span class="delimiter">&quot;</span></span>)
+      ),
+      responseFields(
+        fieldWithPath(<span class="string"><span class="delimiter">&quot;</span><span class="content">id</span><span class="delimiter">&quot;</span></span>).type(JsonFieldType.NUMBER).description(<span class="string"><span class="delimiter">&quot;</span><span class="content">ID</span><span class="delimiter">&quot;</span></span>)
+      )
+    ));
+
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>当单元测试执行通过后，在 target/generated-snippets 下会生成 adoc 文档片段，接着我们在 src/main/asciidoc 下建立 API 主文档：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>├── myapp
+│   ├── src
+│   │   └── main
+│   │       └── asciidoc
+│   │           ├── api-reference.adoc        <i class="conum" data-value="1"></i><b>(1)</b>
+│   │           ├── common.adoc               <i class="conum" data-value="2"></i><b>(2)</b>
+│   │           └── asciidoc-style.css        <i class="conum" data-value="3"></i><b>(3)</b>
+│   └── pom.xml</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>主文档</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>通用部分，比如介绍动词，状态码，异常处理，会话管理等</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>自定义的样式，在 pom.xml 中需要配置</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>在主文档中引入前面单元测试生成的 snippets：</p>
+</div>
+<div class="listingblock">
+<div class="title">api-reference.adoc</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="asciidoc">operation::get-xx[snippets='http-request,path-parameters,http-response,response-fields']</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>接着执行 mvn package 便会在 target/generated-docs 下生成 api-reference.html 。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_单元测试">8. 单元测试</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>（待补充）</p>
@@ -2478,7 +2682,7 @@ logging.maxHistory = 30</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_完整配置参考">8. 完整配置参考</h2>
+<h2 id="_完整配置参考">9. 完整配置参考</h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="title">application.properties</div>
@@ -2491,6 +2695,21 @@ app.basePackage = com.mycompany.myapp
 server.port = 8080
 # CORS 允许的域，支持逗号分割多个域
 cors.allowedOrigins = *
+
+# 日期对象序列化为 JSON 时使用的时区，默认采用操作系统的
+spring.jackson.time-zone = GMT+8
+# 对象序列化为 JSON 时是否格式化显示，默认是单行的
+spring.jackson.serialization.indent_output = true
+
+# 是否启用 swagger 接口文档
+swagger.enable = true
+# swagger 扫描哪些包下的 controller
+swagger.api.basePackage = com.mycompany
+# 接口文档的标题
+swagger.api.title = Myapp Management Platform API Reference
+# 接口的版本
+swagger.api.version = 1.0.0
+
 # 系统日志 root 输出级别，缺省为 INFO
 logging.root.level = INFO
 # 系统日志输出 pattern，缺省为 %d{yyyy/MM/dd-HH:mm:ss SSS} %-5level - %msg %n
@@ -2528,7 +2747,7 @@ auditLog.ip.header =  X-Real-IP</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-01-23 10:22:03 +0800
+Last updated 2019-01-25 09:15:45 +0800
 </div>
 </div>
 </body>

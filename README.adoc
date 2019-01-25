@@ -243,6 +243,10 @@ veigar 是在 spring boot 基础上进一步封装了开发 RESTful 接口时常
 |提供了 mybatis generator 的插件
 |
 
+|*veigar-swagger*
+|提供了 swagger 生成 API 文档的特性
+|
+
 |===
 
 
@@ -1276,6 +1280,8 @@ public class MyAuditLogger implements AuditLogger {
 auditLog.logFail = true
 ----
 
+
+
 == 构建部署包
 
 通过以下命令可以构建用于部署的包：
@@ -1339,6 +1345,171 @@ logging.maxHistory = 30
 以上配置将会覆盖 jar 包中 resources/application.properties 中相应的属性。
 
 
+== 接口文档
+
+
+
+=== swagger 接口文档
+
+要使用 swagger 接口文档，需要添加组件 `veigar-swagger` 的依赖：
+
+.pom.xml
+[source, xml]
+----
+<dependency>
+    <groupId>io.github.watertao</groupId>
+    <artifactId>veigar-swagger</artifactId>
+    <version>2.1.1-SNAPSHOT</version>
+</dependency>
+----
+
+同时在 `application.properties` 中启用 swagger 相关的配置：
+
+.application.properties
+[source, properties]
+----
+# 是否启用 swagger 接口文档
+swagger.enable = true
+# swagger 扫描哪些包下的 controller
+swagger.api.basePackage = com.mycompany
+# 接口文档的标题
+swagger.api.title = Myapp Management Platform API Reference
+# 接口的版本
+swagger.api.version = 1.0.0
+----
+
+
+=== spring REST doc 接口文档
+
+spring REST doc 是 spring 提供的文档生成组件，它基于单元测试，要使用该特性需要在 `pom.xml` 中
+添加以下内容：
+
+.pom.xml
+[source, XML]
+----
+<dependencies>
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework.restdocs</groupId>
+    <artifactId>spring-restdocs-mockmvc</artifactId>
+    <version>2.0.3.RELEASE</version>
+    <scope>test</scope>
+  </dependency>
+</dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.asciidoctor</groupId>
+      <artifactId>asciidoctor-maven-plugin</artifactId>
+      <version>1.5.3</version>
+      <executions>
+        <execution>
+          <id>generate-docs</id>
+          <phase>prepare-package</phase>
+          <goals>
+            <goal>process-asciidoc</goal>
+          </goals>
+          <configuration>
+            <backend>html</backend>
+            <doctype>book</doctype>
+            <attributes>
+              <stylesheet>asciidoc-style.css</stylesheet>             // <1>
+            </attributes>
+          </configuration>
+        </execution>
+      </executions>
+      <dependencies>
+        <dependency>
+          <groupId>org.springframework.restdocs</groupId>
+          <artifactId>spring-restdocs-asciidoctor</artifactId>
+          <version>2.0.3.RELEASE</version>
+        </dependency>
+      </dependencies>
+    </plugin>
+  </plugins>
+</build>
+----
+<1> veigar 提供了一个自定义的 css 样式，可从本项目源码的 assets 目录下获得，该 css 主要是对字体部分做了改动，以更适合中文显示。
+
+编写单元测试：
+
+[source, java]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class Test {
+
+  @Rule
+  public JunitRestDocumentation restDocumentation = new JunitRestDocumentation();
+
+  protected MockMvc mockMvc;
+
+  @Autowired
+  private WebApplicationContext context;
+
+  @Before
+  public void setUp() {
+    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
+      .apply(documentationConfiguration(this.restDocumentation))
+      .build();
+  }
+
+  @Test
+  @Transactional
+  @Rollback
+  public void get() {
+
+    this.mockMvc.perform(
+      get("/a/b/{id}", 123)
+      .accept(MediaType.APPLICATION_JSON)
+    )
+    .andExpect(status().isOk())
+    .andDo(document("get-xx",
+      pathParameters(
+        parameterWithName("id").description("ID")
+      ),
+      responseFields(
+        fieldWithPath("id").type(JsonFieldType.NUMBER).description("ID")
+      )
+    ));
+
+  }
+
+}
+----
+当单元测试执行通过后，在 target/generated-snippets 下会生成 adoc 文档片段，接着我们在 src/main/asciidoc 下建立 API 主文档：
+
+----
+├── myapp
+│   ├── src
+│   │   └── main
+│   │       └── asciidoc
+│   │           ├── api-reference.adoc        // <1>
+│   │           ├── common.adoc               // <2>
+│   │           └── asciidoc-style.css        // <3>
+│   └── pom.xml
+----
+<1> 主文档
+<2> 通用部分，比如介绍动词，状态码，异常处理，会话管理等
+<3> 自定义的样式，在 pom.xml 中需要配置
+
+在主文档中引入前面单元测试生成的 snippets：
+
+.api-reference.adoc
+[source, asciidoc]
+----
+operation::get-xx[snippets='http-request,path-parameters,http-response,response-fields']
+----
+
+接着执行 mvn package 便会在 target/generated-docs 下生成 api-reference.html 。
+
+
+
+
 == 单元测试
 
 （待补充）
@@ -1357,6 +1528,21 @@ app.basePackage = com.mycompany.myapp
 server.port = 8080
 # CORS 允许的域，支持逗号分割多个域
 cors.allowedOrigins = *
+
+# 日期对象序列化为 JSON 时使用的时区，默认采用操作系统的
+spring.jackson.time-zone = GMT+8
+# 对象序列化为 JSON 时是否格式化显示，默认是单行的
+spring.jackson.serialization.indent_output = true
+
+# 是否启用 swagger 接口文档
+swagger.enable = true
+# swagger 扫描哪些包下的 controller
+swagger.api.basePackage = com.mycompany
+# 接口文档的标题
+swagger.api.title = Myapp Management Platform API Reference
+# 接口的版本
+swagger.api.version = 1.0.0
+
 # 系统日志 root 输出级别，缺省为 INFO
 logging.root.level = INFO
 # 系统日志输出 pattern，缺省为 %d{yyyy/MM/dd-HH:mm:ss SSS} %-5level - %msg %n
