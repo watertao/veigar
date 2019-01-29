@@ -10,22 +10,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class HttpGlobalConfig implements WebMvcConfigurer {
 
-  private static final String CORS_ALLOW_ORIGINS_KEY = "cors.allowedOrigins";
-
   @Autowired
-  private Environment env;
+  private CorsConfigBean corsConfigBean;
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
-    String allowedOriginsLiteral = env.getProperty(CORS_ALLOW_ORIGINS_KEY, "");
-    String[] allowedOrigins = allowedOriginsLiteral.split(",", -1);
+
     registry.addMapping("/**")
-      .allowedMethods("POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS")
-      .allowedHeaders("accept", "accept-language", "content-type", "x-auth-token", "if-modified-since")
-      .exposedHeaders("x-total-count", "content-type", "x-auth-token")
-      .allowedOrigins(allowedOrigins)
+      .allowedMethods(corsConfigBean.getAllowedMethods())
+      .allowedHeaders(corsConfigBean.getAllowedHeaders())
+      .exposedHeaders(corsConfigBean.getExposedHeaders())
+      .allowedOrigins(corsConfigBean.getAllowedOrigns())
       .allowCredentials(true)
-      .maxAge(1728000l);
+      .maxAge(corsConfigBean.getMaxAge());
+
   }
 
 }

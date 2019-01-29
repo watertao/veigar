@@ -1,9 +1,11 @@
 package io.github.watertao.veigar.core.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.watertao.veigar.core.config.CorsConfigBean;
 import io.github.watertao.veigar.core.exception.ControllerExceptionRenderer;
 import io.github.watertao.veigar.core.exception.ExceptionView;
 import io.github.watertao.veigar.core.message.LocaleMessage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class ExceptionConversionFilter extends GenericFilterBean implements Orde
   private final ObjectMapper mapper = new Jackson2ObjectMapperBuilder().build();
 
   @Autowired
+  private CorsConfigBean corsConfigBean;
+
+  @Autowired
   private LocaleMessage localeMessage;
 
   @Autowired
@@ -45,6 +50,7 @@ public class ExceptionConversionFilter extends GenericFilterBean implements Orde
       try {
         ExceptionView view = exceptionRenderer.renderException(e, (HttpServletResponse) servletResponse);
         String json = mapper.writeValueAsString(view);
+        setCorsResponseHeader((HttpServletResponse) servletResponse);
         servletResponse.setContentType(RESPONSE_CONTENT_TYPE);
         servletResponse.getWriter().write(json);
       } catch (Exception ex) {
@@ -53,6 +59,15 @@ public class ExceptionConversionFilter extends GenericFilterBean implements Orde
 
     }
 
+  }
+
+  private void setCorsResponseHeader(HttpServletResponse response) {
+    response.setHeader("Access-Control-Allow-Origin", StringUtils.join(corsConfigBean.getAllowedOrigns(), ","));
+    response.setHeader("Access-Control-Allow-Methods", StringUtils.join(corsConfigBean.getAllowedMethods(), ","));
+    response.setHeader("Access-Control-Allow-Credentials", "true");
+    response.setHeader("Access-Control-Max-Age", String.valueOf(corsConfigBean.getMaxAge()));
+    response.setHeader("Access-Control-Allow-Headers", StringUtils.join(corsConfigBean.getAllowedHeaders(), ","));
+    response.setHeader("Access-Control-Expose-Headers", StringUtils.join(corsConfigBean.getExposedHeaders(), ","));
   }
 
 

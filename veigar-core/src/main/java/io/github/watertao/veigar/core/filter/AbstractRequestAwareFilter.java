@@ -1,6 +1,9 @@
 package io.github.watertao.veigar.core.filter;
 
+import io.github.watertao.veigar.core.config.CorsConfigBean;
 import io.github.watertao.veigar.core.util.HttpRequestHelper;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -18,6 +21,9 @@ public abstract class AbstractRequestAwareFilter extends GenericFilterBean imple
   protected String verb;
   protected String uri;
 
+  @Autowired
+  private CorsConfigBean corsConfigBean;
+
   protected AbstractRequestAwareFilter(String verb, String uri) {
     this.verb = verb;
     this.uri = uri;
@@ -31,6 +37,7 @@ public abstract class AbstractRequestAwareFilter extends GenericFilterBean imple
     if (matches((HttpServletRequest) servletRequest)) {
       setCorrespondingStatusCode((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
       handle((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
+      setCorsResponseHeader((HttpServletResponse) servletResponse);
     } else {
       filterChain.doFilter(servletRequest, servletResponse);
     }
@@ -52,6 +59,15 @@ public abstract class AbstractRequestAwareFilter extends GenericFilterBean imple
 
   private void setCorrespondingStatusCode(HttpServletRequest request, HttpServletResponse response) {
     response.setStatus(HttpRequestHelper.resolveStatus(request.getMethod()).value());
+  }
+
+  private void setCorsResponseHeader(HttpServletResponse response) {
+    response.setHeader("Access-Control-Allow-Origin", StringUtils.join(corsConfigBean.getAllowedOrigns(), ","));
+    response.setHeader("Access-Control-Allow-Methods", StringUtils.join(corsConfigBean.getAllowedMethods(), ","));
+    response.setHeader("Access-Control-Allow-Credentials", "true");
+    response.setHeader("Access-Control-Max-Age", String.valueOf(corsConfigBean.getMaxAge()));
+    response.setHeader("Access-Control-Allow-Headers", StringUtils.join(corsConfigBean.getAllowedHeaders(), ","));
+    response.setHeader("Access-Control-Expose-Headers", StringUtils.join(corsConfigBean.getExposedHeaders(), ","));
   }
 
 }
