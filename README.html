@@ -1181,6 +1181,25 @@ Content-Type: application/json;charset=UTF-8
 <pre class="CodeRay highlight"><code data-lang="properties">cors.allowedOrigins = *</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>但需要注意的是，如果客户端的请求中包含了 credential，那么就不可使用 *，必须指定一个确定的域。<br></p>
+</div>
+<div class="paragraph">
+<p>除了域以外，veigar 还支持其他 CORS 相关的配置，但绝大部分情况下不必对其进行设置：</p>
+</div>
+<div class="listingblock">
+<div class="title">application.properties</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties"># 允许跨域访问的 method
+cors.allowedMethods = POST,PUT,GET,PATCH,DELETE,OPTIONS
+# 允许跨域访问时的请求头
+cors.allowedHeaders = x-auth-token,if-modified-since
+# 允许跨域访问时响应中可访问的头
+cors.exposedHeaders = x-total-count,x-auth-token
+# preflight （OPTIONS请求） 的缓存时长
+cors.maxAge = 1728000</code></pre>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_json_pretty_print">4.1.7. JSON pretty print</h4>
@@ -2693,8 +2712,17 @@ spring.profiles.active = dev
 app.basePackage = com.mycompany.myapp
 # 服务端口，缺省 8080
 server.port = 8080
+
 # CORS 允许的域，支持逗号分割多个域
 cors.allowedOrigins = *
+# 允许跨域访问的 method
+cors.allowedMethods = POST,PUT,GET,PATCH,DELETE,OPTIONS
+# 允许跨域访问时的请求头
+cors.allowedHeaders = x-auth-token,if-modified-since
+# 允许跨域访问时响应中可访问的头
+cors.exposedHeaders = x-total-count,x-auth-token
+# preflight （OPTIONS请求） 的缓存时长
+cors.maxAge = 1728000
 
 # 日期对象序列化为 JSON 时使用的时区，默认采用操作系统的
 spring.jackson.time-zone = GMT+8
@@ -2747,7 +2775,7 @@ auditLog.ip.header =  X-Real-IP</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-01-25 09:15:45 +0800
+Last updated 2019-01-29 14:58:23 +0800
 </div>
 </div>
 </body>

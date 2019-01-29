@@ -16,7 +16,7 @@ public class CorsConfigBean {
   private static final String CORS_ALLOW_HEADERS_DEFAULT_VALUE = "accept,accept-language,content-type,x-auth-token,x-devTools-emulate-network-conditions-client-id,if-modified-since";
   private static final String CORS_EXPOSE_HEADERS_KEY = "cors.exposedHeaders";
   private static final String CORS_EXPOSE_HEADERS_DEFAULT_VALUE = "x-total-count,content-type,x-auth-token";
-  private static final String CORS_MAXAGE_KEY = "cors.exposedHeaders";
+  private static final String CORS_MAXAGE_KEY = "cors.maxAge";
   private static final Long CORS_MAXAGE_DEFAULT_VALUE = 1728000l;
 
 
