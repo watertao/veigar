@@ -16,40 +16,6 @@ watertao <1059912278@qq.com>
 
 == 快速入门
 
-=== Maven settings.xml 配置
-
-由于目前 veigar 尚未发布 release 版，只能使用 snapshot 版，所以在使用前我们需要对 settins.xml 做一些配置：
-
-.settings.xml
-[source, xml]
-----
-<profiles>
-  <profile>
-     <id>allow-snapshots</id>
-        <activation><activeByDefault>true</activeByDefault></activation>
-     <repositories>
-       <repository>
-         <id>snapshots-repo</id>
-         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-         <releases><enabled>false</enabled></releases>
-         <snapshots><enabled>true</enabled></snapshots>
-       </repository>
-     </repositories>
-   </profile>
-</profiles>
-----
-
-==== nexus 私服
-
-若企业内部使用了 nexus 私服，为了让 nexus 支持 snapshot 包的代理下载，我们需要对 nexus 做如下配置：
-
-1. 新建一个类型为 proxy 的 respository
-2. 该 repository 的 policy 设置为 Snapshot
-3. remote storage location 设置为 https://oss.sonatype.org/content/repositories/snapshots
-4. download remote indexes 设置为 true
-5. 添加完成后，在 public repositories 中把上面新建的 repository 加进去即可
-
-
 === 新建 Maven 项目
 
 ----
@@ -77,7 +43,7 @@ watertao <1059912278@qq.com>
 <parent>                                <!--1-->
   <groupId>io.github.watertao</groupId>
   <artifactId>veigar-parent</artifactId>
-  <version>2.1.1-SNAPSHOT</version>
+  <version>2.1.1</version>
 </parent>
 <groupId>com.mycompy</groupId>
 <artifactId>myapp</artifactId>
@@ -690,7 +656,7 @@ I'm English，param_1 is a and param_2 is b
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-db</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
 </dependency>
 ----
 
@@ -814,7 +780,7 @@ Model 以及 映射文件。 +
      <dependency>
        <groupId>io.github.watertao</groupId>
        <artifactId>veigar-mbg-plugin</artifactId>
-       <version>2.1.1-SNAPSHOT</version>
+       <version>2.1.1</version>
      </dependency>
    </dependencies>
   </plugin>
@@ -990,7 +956,7 @@ logging.level.com.mycompany.myapp.mapper = DEBUG
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-session</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
 </dependency>
 ----
 
@@ -1005,7 +971,7 @@ logging.level.com.mycompany.myapp.mapper = DEBUG
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-session-map</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
 </dependency>
 ----
 这种方式虽然简单，但会有两个弊端： +
@@ -1022,7 +988,7 @@ logging.level.com.mycompany.myapp.mapper = DEBUG
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-session-redis</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
 </dependency>
 ----
 
@@ -1125,7 +1091,7 @@ veigar 提供了一个 `Filter` 抽象类用于简化某些场景下的登录逻
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-auth</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
 </dependency>
 ----
 
@@ -1251,7 +1217,7 @@ veigar 便是根据 AuthenticationObject 中的 attributes 和 Resource 中的 a
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-audit-log</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
 </dependency>
 ----
 
@@ -1376,7 +1342,7 @@ logging.maxHistory = 30
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-swagger</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
 </dependency>
 ----
 
