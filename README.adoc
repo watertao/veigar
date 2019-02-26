@@ -77,7 +77,7 @@ watertao <1059912278@qq.com>
 <parent>                                <!--1-->
   <groupId>io.github.watertao</groupId>
   <artifactId>veigar-parent</artifactId>
-  <version>2.1.1-SNAPSHOT</version>
+  <version>2.1.1</version>
 </parent>
 <groupId>com.mycompy</groupId>
 <artifactId>myapp</artifactId>
@@ -690,7 +690,7 @@ I'm English，param_1 is a and param_2 is b
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-db</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
 </dependency>
 ----
 
@@ -990,7 +990,7 @@ logging.level.com.mycompany.myapp.mapper = DEBUG
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-session</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
 </dependency>
 ----
 
