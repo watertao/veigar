@@ -916,6 +916,9 @@ public class TestService {
     // pageInfo.getTotal() = 满足条件的记录总数
     // pageInfo.getList() = 当前页返回的 10 条记录
     // ...
+
+    PageHelper.offsetPage(pageIdx * pageSize, pageSize);      // <4>
+
   }
 
 }
@@ -923,6 +926,11 @@ public class TestService {
 <1> 在进行任意的 sql 查询之前，先通过 `PageHelper.startPage` 设置本次分页的起始页和页大小
 <2> 执行 Mapper 的查询方法
 <3> 用 `PageInfo` 类构建一个实例，传入上一步返回的结果集，最终获得的就是一个分页结果对象
+<4> 除了 `startPage` ，PageHelper 还提供了 `offsetPage`， 前者是按页数作为第一个参数，后者是按照游标作为第一个参数
+
+在调用了 PageHelper 类的 `startPage` 和 `offsetPage` 方法之后，紧接着后面的 mapper 查询就会被 PageHelper 进行二次处理，它会同时
+发起一个 count 查询和数据查询，并且返回的结果集是一个被改造过的 List，该 List 具备分页相关的一些属性。因此我们 `new PageInfo(list)` 的
+时候，传入的 list 参数必须是改造过的 List，否则无法正确读取分页信息。
 
 
 
