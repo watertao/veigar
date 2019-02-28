@@ -1286,11 +1286,6 @@ mvn clean package
 这个 jar 包是 `spring-boot-maven-plugin` 插件通过 `repackage` 之后的可执行 jar，所以我们
 可直接通过 `java -jar` 命令进行启动，在 linux 上的完整执行命令可参考：
 
-[source, bash]
-----
-nohup java -jar myapp-x.x.x-SNAPSHOT.jar >/dev/null 2>&1 &
-----
-
 
 == 环境配置
 
@@ -1327,6 +1322,47 @@ logging.maxHistory = 30
 
 以上配置将会覆盖 jar 包中 resources/application.properties 中相应的属性。
 
+
+== 应用的启动和关闭
+
+每次通过 `java -jar` 命令启动应用或通过 `ps` 及 `kill` 命令关闭应用，即繁琐又容易出错。 +
+所以建议在部署目录中创建 `startup.sh` 和 `shutdown.sh` 两个脚本用于启动和关闭。
+
+----
+├── myapp
+│   ├── myapp-x.x.x-SNAPSHOT.jar
+│   ├── startup.sh                              // <1>
+│   ├── shutdown.sh                             // <2>
+│   └── config
+│       └── application.properties
+----
+<1> 启动脚本
+<2> 关闭脚本
+
+.startup.sh
+[source, bash]
+----
+#!/bin/bash
+PROJECTDIR=$(cd $(dirname $0); pwd)
+nohup java -jar myapp-x.x.x-SNAPSHOT.jar >/dev/null 2>&1 &
+echo $! > $PROJECTDIR/.pid
+----
+
+
+.shutdown.sh
+[source, bash]
+----
+#!/bin/bash
+PROJECT_DIR=$(cd $(dirname $0); pwd)
+kill $(cat $PROJECT_DIR/.pid)
+----
+
+[NOTE]
+====
+别忘了为这两个脚本添加执行权限。 +
+`chmod a+x startup.sh` +
+`chmod a+x shutdown.sh`
+====
 
 == 接口文档
 

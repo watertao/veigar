@@ -535,22 +535,17 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_贡献者">1. 贡献者</a></li>
 <li><a href="#_快速入门">2. 快速入门</a>
 <ul class="sectlevel2">
-<li><a href="#_maven_settings_xml_配置">2.1. Maven settings.xml 配置</a>
+<li><a href="#_新建_maven_项目">2.1. 新建 Maven 项目</a></li>
+<li><a href="#_pom_xml">2.2. pom.xml</a>
 <ul class="sectlevel3">
-<li><a href="#_nexus_私服">2.1.1. nexus 私服</a></li>
+<li><a href="#_继承_veigar_parent">2.2.1. 继承 veigar-parent</a></li>
+<li><a href="#_依赖_veigar_core">2.2.2. 依赖 veigar-core</a></li>
 </ul>
 </li>
-<li><a href="#_新建_maven_项目">2.2. 新建 Maven 项目</a></li>
-<li><a href="#_pom_xml">2.3. pom.xml</a>
-<ul class="sectlevel3">
-<li><a href="#_继承_veigar_parent">2.3.1. 继承 veigar-parent</a></li>
-<li><a href="#_依赖_veigar_core">2.3.2. 依赖 veigar-core</a></li>
-</ul>
-</li>
-<li><a href="#_bootstrapapplication_java">2.4. BootstrapApplication.java</a></li>
-<li><a href="#_application_properties">2.5. application.properties</a></li>
-<li><a href="#_第一个接口">2.6. 第一个接口</a></li>
-<li><a href="#_启动项目">2.7. 启动项目</a></li>
+<li><a href="#_bootstrapapplication_java">2.3. BootstrapApplication.java</a></li>
+<li><a href="#_application_properties">2.4. application.properties</a></li>
+<li><a href="#_第一个接口">2.5. 第一个接口</a></li>
+<li><a href="#_启动项目">2.6. 启动项目</a></li>
 </ul>
 </li>
 <li><a href="#_设计理念">3. 设计理念</a></li>
@@ -599,14 +594,15 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 <li><a href="#_构建部署包">5. 构建部署包</a></li>
 <li><a href="#_环境配置">6. 环境配置</a></li>
-<li><a href="#_接口文档">7. 接口文档</a>
+<li><a href="#_应用的启动和关闭">7. 应用的启动和关闭</a></li>
+<li><a href="#_接口文档">8. 接口文档</a>
 <ul class="sectlevel2">
-<li><a href="#_swagger_接口文档">7.1. swagger 接口文档</a></li>
-<li><a href="#_spring_rest_doc_接口文档">7.2. spring REST doc 接口文档</a></li>
+<li><a href="#_swagger_接口文档">8.1. swagger 接口文档</a></li>
+<li><a href="#_spring_rest_doc_接口文档">8.2. spring REST doc 接口文档</a></li>
 </ul>
 </li>
-<li><a href="#_单元测试">8. 单元测试</a></li>
-<li><a href="#_完整配置参考">9. 完整配置参考</a></li>
+<li><a href="#_单元测试">9. 单元测试</a></li>
+<li><a href="#_完整配置参考">10. 完整配置参考</a></li>
 </ul>
 </div>
 </div>
@@ -630,57 +626,7 @@ table.CodeRay td.code>pre{padding:0}
 <h2 id="_快速入门">2. 快速入门</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_maven_settings_xml_配置">2.1. Maven settings.xml 配置</h3>
-<div class="paragraph">
-<p>由于目前 veigar 尚未发布 release 版，只能使用 snapshot 版，所以在使用前我们需要对 settins.xml 做一些配置：</p>
-</div>
-<div class="listingblock">
-<div class="title">settings.xml</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;profiles&gt;</span>
-  <span class="tag">&lt;profile&gt;</span>
-     <span class="tag">&lt;id&gt;</span>allow-snapshots<span class="tag">&lt;/id&gt;</span>
-        <span class="tag">&lt;activation&gt;</span><span class="tag">&lt;activeByDefault&gt;</span>true<span class="tag">&lt;/activeByDefault&gt;</span><span class="tag">&lt;/activation&gt;</span>
-     <span class="tag">&lt;repositories&gt;</span>
-       <span class="tag">&lt;repository&gt;</span>
-         <span class="tag">&lt;id&gt;</span>snapshots-repo<span class="tag">&lt;/id&gt;</span>
-         <span class="tag">&lt;url&gt;</span>https://oss.sonatype.org/content/repositories/snapshots<span class="tag">&lt;/url&gt;</span>
-         <span class="tag">&lt;releases&gt;</span><span class="tag">&lt;enabled&gt;</span>false<span class="tag">&lt;/enabled&gt;</span><span class="tag">&lt;/releases&gt;</span>
-         <span class="tag">&lt;snapshots&gt;</span><span class="tag">&lt;enabled&gt;</span>true<span class="tag">&lt;/enabled&gt;</span><span class="tag">&lt;/snapshots&gt;</span>
-       <span class="tag">&lt;/repository&gt;</span>
-     <span class="tag">&lt;/repositories&gt;</span>
-   <span class="tag">&lt;/profile&gt;</span>
-<span class="tag">&lt;/profiles&gt;</span></code></pre>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_nexus_私服">2.1.1. nexus 私服</h4>
-<div class="paragraph">
-<p>若企业内部使用了 nexus 私服，为了让 nexus 支持 snapshot 包的代理下载，我们需要对 nexus 做如下配置：</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>新建一个类型为 proxy 的 respository</p>
-</li>
-<li>
-<p>该 repository 的 policy 设置为 Snapshot</p>
-</li>
-<li>
-<p>remote storage location 设置为 <a href="https://oss.sonatype.org/content/repositories/snapshots" class="bare">https://oss.sonatype.org/content/repositories/snapshots</a></p>
-</li>
-<li>
-<p>download remote indexes 设置为 true</p>
-</li>
-<li>
-<p>添加完成后，在 public repositories 中把上面新建的 repository 加进去即可</p>
-</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_新建_maven_项目">2.2. 新建 Maven 项目</h3>
+<h3 id="_新建_maven_项目">2.1. 新建 Maven 项目</h3>
 <div class="listingblock">
 <div class="content">
 <pre>├── myapp
@@ -697,19 +643,19 @@ table.CodeRay td.code>pre{padding:0}
 </div>
 </div>
 <div class="sect2">
-<h3 id="_pom_xml">2.3. pom.xml</h3>
+<h3 id="_pom_xml">2.2. pom.xml</h3>
 <div class="paragraph">
 <p>在 pom.xml 中引入 veigar 有两种方式：</p>
 </div>
 <div class="sect3">
-<h4 id="_继承_veigar_parent">2.3.1. 继承 veigar-parent</h4>
+<h4 id="_继承_veigar_parent">2.2.1. 继承 veigar-parent</h4>
 <div class="listingblock">
 <div class="title">pom.xml</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;parent&gt;</span>                                <i class="conum" data-value="1"></i><b>(1)</b>
   <span class="tag">&lt;groupId&gt;</span>io.github.watertao<span class="tag">&lt;/groupId&gt;</span>
   <span class="tag">&lt;artifactId&gt;</span>veigar-parent<span class="tag">&lt;/artifactId&gt;</span>
-  <span class="tag">&lt;version&gt;</span>2.1.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+  <span class="tag">&lt;version&gt;</span>2.1.1<span class="tag">&lt;/version&gt;</span>
 <span class="tag">&lt;/parent&gt;</span>
 <span class="tag">&lt;groupId&gt;</span>com.mycompy<span class="tag">&lt;/groupId&gt;</span>
 <span class="tag">&lt;artifactId&gt;</span>myapp<span class="tag">&lt;/artifactId&gt;</span>
@@ -726,7 +672,7 @@ table.CodeRay td.code>pre{padding:0}
 </div>
 </div>
 <div class="sect3">
-<h4 id="_依赖_veigar_core">2.3.2. 依赖 veigar-core</h4>
+<h4 id="_依赖_veigar_core">2.2.2. 依赖 veigar-core</h4>
 <div class="paragraph">
 <p>若项目无法依赖 <code>veigar-parent</code>（比如需要依赖其他 parent） ，那么通过以下方式可达到同样效果：</p>
 </div>
@@ -767,7 +713,7 @@ table.CodeRay td.code>pre{padding:0}
 </div>
 </div>
 <div class="sect2">
-<h3 id="_bootstrapapplication_java">2.4. BootstrapApplication.java</h3>
+<h3 id="_bootstrapapplication_java">2.3. BootstrapApplication.java</h3>
 <div class="listingblock">
 <div class="title">BootstrapApplication.java</div>
 <div class="content">
@@ -813,7 +759,7 @@ table.CodeRay td.code>pre{padding:0}
 </div>
 </div>
 <div class="sect2">
-<h3 id="_application_properties">2.5. application.properties</h3>
+<h3 id="_application_properties">2.4. application.properties</h3>
 <div class="listingblock">
 <div class="title">application.properties</div>
 <div class="content">
@@ -845,7 +791,7 @@ cors.allowedOrigins = *                 <i class="conum" data-value="4"></i><b>(
 </div>
 </div>
 <div class="sect2">
-<h3 id="_第一个接口">2.6. 第一个接口</h3>
+<h3 id="_第一个接口">2.5. 第一个接口</h3>
 <div class="paragraph">
 <p>创建 src/main/java/com/mycompany/myapp/controller/TestController.java</p>
 </div>
@@ -890,7 +836,7 @@ cors.allowedOrigins = *                 <i class="conum" data-value="4"></i><b>(
 </div>
 </div>
 <div class="sect2">
-<h3 id="_启动项目">2.7. 启动项目</h3>
+<h3 id="_启动项目">2.6. 启动项目</h3>
 <div class="paragraph">
 <p>通过执行 <code>spring-boot-maven-plugin</code> 启动项目：</p>
 </div>
@@ -1592,7 +1538,7 @@ veigar 提供了以下几个常用的运行时异常类：</p>
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
     <span class="tag">&lt;groupId&gt;</span>io.github.watertao<span class="tag">&lt;/groupId&gt;</span>
     <span class="tag">&lt;artifactId&gt;</span>veigar-db<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>2.1.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.1.1<span class="tag">&lt;/version&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
@@ -1744,7 +1690,7 @@ Model 以及 映射文件。<br>
      <span class="tag">&lt;dependency&gt;</span>
        <span class="tag">&lt;groupId&gt;</span>io.github.watertao<span class="tag">&lt;/groupId&gt;</span>
        <span class="tag">&lt;artifactId&gt;</span>veigar-mbg-plugin<span class="tag">&lt;/artifactId&gt;</span>
-       <span class="tag">&lt;version&gt;</span>2.1.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+       <span class="tag">&lt;version&gt;</span>2.1.1<span class="tag">&lt;/version&gt;</span>
      <span class="tag">&lt;/dependency&gt;</span>
    <span class="tag">&lt;/dependencies&gt;</span>
   <span class="tag">&lt;/plugin&gt;</span>
@@ -1983,7 +1929,7 @@ sql 方言，缺省为 <code>mysql</code>：</p>
 <pre class="CodeRay highlight"><code data-lang="XML"><span class="tag">&lt;dependency&gt;</span>
     <span class="tag">&lt;groupId&gt;</span>io.github.watertao<span class="tag">&lt;/groupId&gt;</span>
     <span class="tag">&lt;artifactId&gt;</span>veigar-session<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>2.1.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.1.1<span class="tag">&lt;/version&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
@@ -2001,7 +1947,7 @@ sql 方言，缺省为 <code>mysql</code>：</p>
 <pre class="CodeRay highlight"><code data-lang="XML"><span class="tag">&lt;dependency&gt;</span>
     <span class="tag">&lt;groupId&gt;</span>io.github.watertao<span class="tag">&lt;/groupId&gt;</span>
     <span class="tag">&lt;artifactId&gt;</span>veigar-session-map<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>2.1.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.1.1<span class="tag">&lt;/version&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
@@ -2022,7 +1968,7 @@ sql 方言，缺省为 <code>mysql</code>：</p>
 <pre class="CodeRay highlight"><code data-lang="XML"><span class="tag">&lt;dependency&gt;</span>
     <span class="tag">&lt;groupId&gt;</span>io.github.watertao<span class="tag">&lt;/groupId&gt;</span>
     <span class="tag">&lt;artifactId&gt;</span>veigar-session-redis<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>2.1.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.1.1<span class="tag">&lt;/version&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
@@ -2157,7 +2103,7 @@ Set-Cookie: auth=47844236-fdb6-494e-bd66-7607f8c9b1b6; path=/; httpOnly;</pre>
 <pre class="CodeRay highlight"><code data-lang="XML"><span class="tag">&lt;dependency&gt;</span>
     <span class="tag">&lt;groupId&gt;</span>io.github.watertao<span class="tag">&lt;/groupId&gt;</span>
     <span class="tag">&lt;artifactId&gt;</span>veigar-auth<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>2.1.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.1.1<span class="tag">&lt;/version&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
@@ -2334,7 +2280,7 @@ veigar 便是根据 AuthenticationObject 中的 attributes 和 Resource 中的 a
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
     <span class="tag">&lt;groupId&gt;</span>io.github.watertao<span class="tag">&lt;/groupId&gt;</span>
     <span class="tag">&lt;artifactId&gt;</span>veigar-audit-log<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>2.1.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.1.1<span class="tag">&lt;/version&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
@@ -2443,11 +2389,6 @@ veigar 便是根据 AuthenticationObject 中的 attributes 和 Resource 中的 a
 <p>这个 jar 包是 <code>spring-boot-maven-plugin</code> 插件通过 <code>repackage</code> 之后的可执行 jar，所以我们
 可直接通过 <code>java -jar</code> 命令进行启动，在 linux 上的完整执行命令可参考：</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">nohup java -jar myapp-x.x.x-SNAPSHOT.jar &gt;/dev/null 2&gt;&amp;1 &amp;</code></pre>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -2500,10 +2441,74 @@ logging.maxHistory = 30</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_接口文档">7. 接口文档</h2>
+<h2 id="_应用的启动和关闭">7. 应用的启动和关闭</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>每次通过 <code>java -jar</code> 命令启动应用或通过 <code>ps</code> 及 <code>kill</code> 命令关闭应用，即繁琐又容易出错。<br>
+所以建议在部署目录中创建 <code>startup.sh</code> 和 <code>shutdown.sh</code> 两个脚本用于启动和关闭。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>├── myapp
+│   ├── myapp-x.x.x-SNAPSHOT.jar
+│   ├── startup.sh                              <i class="conum" data-value="1"></i><b>(1)</b>
+│   ├── shutdown.sh                             <i class="conum" data-value="2"></i><b>(2)</b>
+│   └── config
+│       └── application.properties</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>启动脚本</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>关闭脚本</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">startup.sh</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">#!/bin/bash
+PROJECTDIR=$(cd $(dirname $0); pwd)
+nohup java -jar myapp-x.x.x-SNAPSHOT.jar &gt;/dev/null 2&gt;&amp;1 &amp;
+echo $! &gt; $PROJECTDIR/.pid</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">shutdown.sh</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">#!/bin/bash
+PROJECT_DIR=$(cd $(dirname $0); pwd)
+kill $(cat $PROJECT_DIR/.pid)</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>别忘了为这两个脚本添加执行权限。<br>
+<code>chmod a+x startup.sh</code><br>
+<code>chmod a+x shutdown.sh</code></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_接口文档">8. 接口文档</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_swagger_接口文档">7.1. swagger 接口文档</h3>
+<h3 id="_swagger_接口文档">8.1. swagger 接口文档</h3>
 <div class="paragraph">
 <p>要使用 swagger 接口文档，需要添加组件 <code>veigar-swagger</code> 的依赖：</p>
 </div>
@@ -2513,7 +2518,7 @@ logging.maxHistory = 30</code></pre>
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
     <span class="tag">&lt;groupId&gt;</span>io.github.watertao<span class="tag">&lt;/groupId&gt;</span>
     <span class="tag">&lt;artifactId&gt;</span>veigar-swagger<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>2.1.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.1.1<span class="tag">&lt;/version&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
@@ -2535,7 +2540,7 @@ swagger.api.version = 1.0.0</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_spring_rest_doc_接口文档">7.2. spring REST doc 接口文档</h3>
+<h3 id="_spring_rest_doc_接口文档">8.2. spring REST doc 接口文档</h3>
 <div class="paragraph">
 <p>spring REST doc 是 spring 提供的文档生成组件，它基于单元测试，要使用该特性需要在 <code>pom.xml</code> 中
 添加以下内容：</p>
@@ -2693,7 +2698,7 @@ swagger.api.version = 1.0.0</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_单元测试">8. 单元测试</h2>
+<h2 id="_单元测试">9. 单元测试</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>（待补充）</p>
@@ -2701,7 +2706,7 @@ swagger.api.version = 1.0.0</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_完整配置参考">9. 完整配置参考</h2>
+<h2 id="_完整配置参考">10. 完整配置参考</h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="title">application.properties</div>
@@ -2775,7 +2780,7 @@ auditLog.ip.header =  X-Real-IP</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-01-29 14:58:23 +0800
+Last updated 2019-02-28 15:51:22 +0800
 </div>
 </div>
 </body>
