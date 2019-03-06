@@ -953,6 +953,13 @@ logging.level.com.mycompany.myapp.mapper = DEBUG
 2019/01/14-16:57:29 653 DEBUG - <==      Total: 1
 ----
 
+[NOTE]
+====
+由于开发环境的配置会被打包进 jar，所以在生产环境配置 config/application.properties 时，记得这点。若是发现在生产中并未对某个 logger 做
+配置，但依然打印了日志，也许可能就是开发环境的配置在作祟。
+====
+
+
 
 === 会话（ Session ）支持
 
