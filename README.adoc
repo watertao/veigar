@@ -65,6 +65,7 @@ watertao <1059912278@qq.com>
   <dependency>                          <!--1-->
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-core</artifactId>
+    <version>2.1.1</version>
   </dependency>
 </dependencies>
 <build>
