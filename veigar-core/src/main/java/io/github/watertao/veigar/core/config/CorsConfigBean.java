@@ -13,7 +13,7 @@ public class CorsConfigBean {
   private static final String CORS_ALLOW_METHODS_KEY = "cors.allowedMethods";
   private static final String CORS_ALLOW_METHODS_DEFAULT_VALUE = "POST,PUT,GET,PATCH,DELETE,OPTIONS";
   private static final String CORS_ALLOW_HEADERS_KEY = "cors.allowedHeaders";
-  private static final String CORS_ALLOW_HEADERS_DEFAULT_VALUE = "accept,accept-language,content-type,x-auth-token,x-devTools-emulate-network-conditions-client-id,if-modified-since";
+  private static final String CORS_ALLOW_HEADERS_DEFAULT_VALUE = "accept,accept-language,content-type,x-auth-token,x-devTools-emulate-network-conditions-client-id,if-modified-since,pragma,cache-control";
   private static final String CORS_EXPOSE_HEADERS_KEY = "cors.exposedHeaders";
   private static final String CORS_EXPOSE_HEADERS_DEFAULT_VALUE = "x-total-count,content-type,x-auth-token";
   private static final String CORS_MAXAGE_KEY = "cors.maxAge";
