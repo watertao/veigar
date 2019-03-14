@@ -73,6 +73,17 @@ watertao <1059912278@qq.com>
     <plugin>                            <!--2-->
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-maven-plugin</artifactId>
+      <executions>
+        <execution>
+          <id>repackage</id>
+          <goals>
+            <goal>repackage</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+        <mainClass>${start-class}</mainClass>
+      </configuration>
     </plugin>
   </plugins>
 </build>
