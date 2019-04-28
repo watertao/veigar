@@ -27,7 +27,7 @@ public abstract class AuthenticationFilter extends AbstractJsonRequestAwareFilte
   @Override
   protected Object handleJson(HttpServletRequest request, HttpServletResponse response, Object content) {
 
-    AuthenticationObject authObj = authenticate(content);
+    AuthenticationObject authObj = authenticate(request, response, content);
 
     if (authObj == null) {
       throw new UnauthenticatedException(localeMessage.bm("message.auth", "authentication.error"));
@@ -39,7 +39,11 @@ public abstract class AuthenticationFilter extends AbstractJsonRequestAwareFilte
 
   }
 
-  protected abstract AuthenticationObject authenticate(Object requestBody);
+  protected abstract AuthenticationObject authenticate(
+    HttpServletRequest request,
+    HttpServletResponse response,
+    Object requestBody
+  );
 
   @Override
   public int getOrder() {
