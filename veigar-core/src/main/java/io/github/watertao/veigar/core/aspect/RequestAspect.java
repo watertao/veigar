@@ -76,7 +76,7 @@ public class RequestAspect {
       if (requestPostProcessors != null && requestPostProcessors.size() > 0) {
         for (RequestPostProcessor processor : requestPostProcessors) {
           try {
-            logger.info("[ post process ] {}", processor.getClass().getSimpleName());
+            long postProcessStart = System.currentTimeMillis();
             processor.process(
               HttpRequestHelper.getCurrentRequest(),
               HttpRequestHelper.getCurrentResponse(),
@@ -86,6 +86,7 @@ public class RequestAspect {
               requestTime,
               cost
             );
+            logger.info("[ req post process ] {} ({})", processor.getClass().getSimpleName(), System.currentTimeMillis() - postProcessStart);
           } catch (Throwable e) {
             logger.error("Error on post process", e);
           }
