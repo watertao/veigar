@@ -7,6 +7,12 @@ import java.util.List;
  */
 public interface Resource {
 
+  String getVerb();
+
+  String getUriPattern();
+
+  String getName();
+
   /**
    * 获取资源相关的 属性 列表
    *

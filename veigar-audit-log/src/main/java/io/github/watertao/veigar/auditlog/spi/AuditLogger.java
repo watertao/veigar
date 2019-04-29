@@ -12,7 +12,6 @@ public interface AuditLogger {
    *
    *
    * @param authObj
-   * @param resource
    * @param reqVerb
    * @param requestUri
    * @param remoteIp
@@ -22,10 +21,10 @@ public interface AuditLogger {
    * @param cost
    */
   void log(
-    @Nullable AuthenticationObject authObj,
-    @Nullable Resource resource,
+    AuthenticationObject authObj,
     String reqVerb,
     String requestUri,
+    String operationName,
     String remoteIp,
     @Nullable Object requestBody,
     @Nullable Object responseBody,
