@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -42,6 +43,7 @@ public class AuditLoggerPostProcessor implements RequestPostProcessor {
     Object requestBody,
     Object responseBody,
     Throwable e,
+    Date requestTime,
     Long cost) {
 
     if (METHODS_TO_LOG.contains(request.getMethod())) {

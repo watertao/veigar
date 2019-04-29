@@ -15,6 +15,7 @@ import io.github.watertao.veigar.session.spi.AuthenticationObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,7 +45,7 @@ public abstract class CredentialUpdateFilter extends AbstractJsonRequestAwareFil
   @Override
   protected Object handleJson(HttpServletRequest request, HttpServletResponse response, Object json) {
 
-    Long startTime = System.currentTimeMillis();
+    Date requestTime = new Date();
 
     AuthenticationObject authObj = AuthObjHolder.getAuthObj(request);
 
@@ -64,7 +65,8 @@ public abstract class CredentialUpdateFilter extends AbstractJsonRequestAwareFil
             json,
             authObj,
             null,
-            System.currentTimeMillis() - startTime
+            requestTime,
+            System.currentTimeMillis() - requestTime.getTime()
           );
         } catch (Throwable e) {
           logger.error("Error on post process", e);

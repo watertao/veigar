@@ -4,6 +4,8 @@ import io.github.watertao.veigar.session.spi.AuthenticationObject;
 import io.github.watertao.veigar.session.spi.Resource;
 import org.springframework.lang.Nullable;
 
+import java.util.Date;
+
 public interface AuditLogger {
 
   /**
@@ -28,6 +30,7 @@ public interface AuditLogger {
     @Nullable Object requestBody,
     @Nullable Object responseBody,
     @Nullable Throwable e,
+    Date requestTime,
     Long cost);
 
 }

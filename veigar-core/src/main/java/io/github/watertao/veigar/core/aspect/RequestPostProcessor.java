@@ -4,6 +4,7 @@ import org.springframework.lang.Nullable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 public interface RequestPostProcessor {
 
@@ -23,6 +24,7 @@ public interface RequestPostProcessor {
     @Nullable Object requestBody,
     @Nullable Object responseBody,
     @Nullable Throwable e,
+    Date requestTime,
     Long cost);
 
 }
