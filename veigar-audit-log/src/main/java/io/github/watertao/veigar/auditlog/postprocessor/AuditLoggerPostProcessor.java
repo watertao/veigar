@@ -54,7 +54,7 @@ public class AuditLoggerPostProcessor implements RequestPostProcessor {
         return;
       }
 
-      Long requestAcceptTimestamp = System.currentTimeMillis();
+      Date requestAcceptTimestamp = new Date();
 
       // retrieve remote ip
       String remoteIp = null;
@@ -73,6 +73,7 @@ public class AuditLoggerPostProcessor implements RequestPostProcessor {
         requestBody,
         responseBody,
         e,
+        requestAcceptTimestamp,
         cost
       );
 
