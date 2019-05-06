@@ -7,6 +7,8 @@ import java.util.List;
  */
 public interface Resource {
 
+  Integer getId();
+
   String getVerb();
 
   String getUriPattern();
