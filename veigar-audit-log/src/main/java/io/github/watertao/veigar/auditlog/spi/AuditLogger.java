@@ -22,6 +22,7 @@ public interface AuditLogger {
    */
   void log(
     AuthenticationObject authObj,
+    Integer operationId,
     String reqVerb,
     String requestUri,
     String operationName,

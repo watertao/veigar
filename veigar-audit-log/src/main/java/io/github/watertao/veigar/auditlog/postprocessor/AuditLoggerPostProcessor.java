@@ -82,6 +82,7 @@ public class AuditLoggerPostProcessor implements RequestPostProcessor {
 
       auditLogger.log(
         authObj,
+        restApi.getId(),
         restApi.getVerb(),
         restApi.getUriPattern(),
         restApi.getName(),
