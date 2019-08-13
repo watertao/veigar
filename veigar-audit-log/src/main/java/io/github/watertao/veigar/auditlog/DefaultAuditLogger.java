@@ -15,6 +15,7 @@ public class DefaultAuditLogger implements AuditLogger {
   @Override
   public void log(
     AuthenticationObject authObj,
+    Integer operationId,
     String reqVerb,
     String requestUri,
     String operationName,

@@ -4,14 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.watertao.veigar.core.exception.BadRequestException;
 import io.github.watertao.veigar.core.exception.InternalServerErrorException;
 import io.github.watertao.veigar.core.util.HttpRequestHelper;
+import org.hibernate.validator.HibernateValidator;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by watertao on 3/26/16.
@@ -19,6 +24,10 @@ import java.util.HashMap;
 public abstract class AbstractJsonRequestAwareFilter extends AbstractRequestAwareFilter {
 
   private ObjectMapper mapper = new Jackson2ObjectMapperBuilder().build();
+
+  private static final Validator validator = Validation
+    .byProvider(HibernateValidator.class).configure().failFast(true).buildValidatorFactory().getValidator();
+
 
   protected AbstractJsonRequestAwareFilter(String verb, String uri) {
     super(verb, uri);
@@ -35,6 +44,13 @@ public abstract class AbstractJsonRequestAwareFilter extends AbstractRequestAwar
       } catch (Exception e) {
         throw new BadRequestException(e.getMessage(), e);
       }
+
+      Set<ConstraintViolation<Object>> violations = validator.validate(requestBody);
+      if (violations.size() > 0) {
+        ConstraintViolation<Object> violation = violations.iterator().next();
+        throw new BadRequestException("{" + violation.getPropertyPath() + "} " + violation.getMessage());
+      }
+
     }
 
     Object result = handleJson(request, response, requestBody);

@@ -135,6 +135,15 @@
 
   <profiles>
     <profile>
+      <id>snapshot</id>
+      <distributionManagement>
+        <snapshotRepository>
+          <id>maven-shapshots</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+    <profile>
       <id>release</id>
       <build>
         <plugins>

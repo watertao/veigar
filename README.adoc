@@ -668,7 +668,7 @@ I'm English，param_1 is a and param_2 is b
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-db</artifactId>
-    <version>2.1.1</version>
+    <version>2.2.0</version>
 </dependency>
 ----
 
@@ -792,7 +792,7 @@ Model 以及 映射文件。 +
      <dependency>
        <groupId>io.github.watertao</groupId>
        <artifactId>veigar-mbg-plugin</artifactId>
-       <version>2.1.1</version>
+       <version>2.2.0</version>
      </dependency>
    </dependencies>
   </plugin>
@@ -983,7 +983,7 @@ logging.level.com.mycompany.myapp.mapper = DEBUG
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-session</artifactId>
-    <version>2.1.1</version>
+    <version>2.2.0</version>
 </dependency>
 ----
 
@@ -998,7 +998,7 @@ logging.level.com.mycompany.myapp.mapper = DEBUG
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-session-map</artifactId>
-    <version>2.1.1</version>
+    <version>2.2.0</version>
 </dependency>
 ----
 这种方式虽然简单，但会有两个弊端： +
@@ -1015,7 +1015,7 @@ logging.level.com.mycompany.myapp.mapper = DEBUG
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-session-redis</artifactId>
-    <version>2.1.1</version>
+    <version>2.2.0</version>
 </dependency>
 ----
 
@@ -1118,7 +1118,7 @@ veigar 提供了一个 `Filter` 抽象类用于简化某些场景下的登录逻
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-auth</artifactId>
-    <version>2.1.1</version>
+    <version>2.2.0</version>
 </dependency>
 ----
 
@@ -1134,7 +1134,7 @@ public class MyAuthenticationFilter extends AuthenticationFilter {
     super(METHOD, URI);                     // <1>
   }
   @Override
-  protected AuthenticationObject authenticate(Object requestBody) {
+  protected AuthenticationObject authenticate(HttpServletRequest request, HttpServletResponse response, Object requestBody) {
     AuthenticationRequest authRequest = (AuthenticationRequest)requestBody;
     String userName = authRequest.getName();
     String password = authRequest.getPassword();
@@ -1244,7 +1244,7 @@ veigar 便是根据 AuthenticationObject 中的 attributes 和 Resource 中的 a
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-audit-log</artifactId>
-    <version>2.1.1</version>
+    <version>2.2.0</version>
 </dependency>
 ----
 
@@ -1405,7 +1405,7 @@ kill $(cat $PROJECT_DIR/.pid)
 <dependency>
     <groupId>io.github.watertao</groupId>
     <artifactId>veigar-swagger</artifactId>
-    <version>2.1.1</version>
+    <version>2.2.0</version>
 </dependency>
 ----
 
