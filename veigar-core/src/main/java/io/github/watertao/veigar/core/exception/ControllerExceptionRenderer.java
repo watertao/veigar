@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -30,6 +31,8 @@ public class ControllerExceptionRenderer {
           return handleHttpMessageNotReadableException(response, (HttpMessageNotReadableException) e);
         } else if (e instanceof MethodArgumentNotValidException) {
           return handleMethodArgumentNotValidException(response, (MethodArgumentNotValidException) e);
+        } else if (e instanceof MethodArgumentTypeMismatchException) {
+          return handleMethodArgumentTypeMismatchException(response, (MethodArgumentTypeMismatchException) e);
         } else if (e instanceof MissingServletRequestParameterException) {
           return handleMissingServletRequestParameterException(response, (MissingServletRequestParameterException) e);
         } else {
@@ -81,6 +84,12 @@ public class ControllerExceptionRenderer {
 
 
     return new ExceptionView(status, msgSb.toString());
+  }
+
+  private ExceptionView handleMethodArgumentTypeMismatchException(HttpServletResponse res, MethodArgumentTypeMismatchException exception) {
+    HttpStatus status = HttpStatus.BAD_REQUEST;
+    res.setStatus(status.value());
+    return new ExceptionView(HttpStatus.BAD_REQUEST, "invalid parameter: " + exception.getName());
   }
 
 

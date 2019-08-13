@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.List;
 
 
@@ -40,7 +41,7 @@ public class RequestAspect {
 
     @Around("controller() && allPubOp() && (reqAnno() || cReqAnno())")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-      Long processStartMs = System.currentTimeMillis();
+      Date requestTime = new Date();
 
       // log request
       try {
@@ -62,7 +63,7 @@ public class RequestAspect {
           exception = e;
       }
 
-      Long cost = System.currentTimeMillis() - processStartMs;
+      Long cost = System.currentTimeMillis() - requestTime.getTime();
 
       // log response
       try {
@@ -75,15 +76,17 @@ public class RequestAspect {
       if (requestPostProcessors != null && requestPostProcessors.size() > 0) {
         for (RequestPostProcessor processor : requestPostProcessors) {
           try {
-            logger.info("[ post process ] {}", processor.getClass().getSimpleName());
+            long postProcessStart = System.currentTimeMillis();
             processor.process(
               HttpRequestHelper.getCurrentRequest(),
               HttpRequestHelper.getCurrentResponse(),
               retrieveRequestBody(joinPoint),
               result,
               exception,
+              requestTime,
               cost
             );
+            logger.info("[ req post process ] {} ({})", processor.getClass().getSimpleName(), System.currentTimeMillis() - postProcessStart);
           } catch (Throwable e) {
             logger.error("Error on post process", e);
           }

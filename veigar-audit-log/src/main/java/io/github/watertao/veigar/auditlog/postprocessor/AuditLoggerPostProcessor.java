@@ -4,6 +4,9 @@ import io.github.watertao.veigar.auditlog.spi.AuditLogger;
 import io.github.watertao.veigar.core.aspect.RequestPostProcessor;
 import io.github.watertao.veigar.session.api.AuthObjHolder;
 import io.github.watertao.veigar.session.api.ResourceHolder;
+import io.github.watertao.veigar.session.spi.AuthenticationObject;
+import io.github.watertao.veigar.session.spi.Resource;
+import io.github.watertao.veigar.session.spi.SecurityHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -35,6 +39,9 @@ public class AuditLoggerPostProcessor implements RequestPostProcessor {
   @Autowired
   private AuditLogger auditLogger;
 
+  @Autowired
+  private SecurityHandler securityHandler;
+
   @Override
   public void process(
     HttpServletRequest request,
@@ -42,6 +49,7 @@ public class AuditLoggerPostProcessor implements RequestPostProcessor {
     Object requestBody,
     Object responseBody,
     Throwable e,
+    Date requestTime,
     Long cost) {
 
     if (METHODS_TO_LOG.contains(request.getMethod())) {
@@ -52,7 +60,17 @@ public class AuditLoggerPostProcessor implements RequestPostProcessor {
         return;
       }
 
-      Long requestAcceptTimestamp = System.currentTimeMillis();
+      AuthenticationObject authObj = AuthObjHolder.getAuthObj(request);
+      if (authObj == null) {
+        return;
+      }
+
+      Resource restApi = securityHandler.identifyResource(request.getMethod(), request.getRequestURI(), authObj);
+      if (restApi == null) {
+        return;
+      }
+
+      Date requestAcceptTimestamp = new Date();
 
       // retrieve remote ip
       String remoteIp = null;
@@ -63,14 +81,16 @@ public class AuditLoggerPostProcessor implements RequestPostProcessor {
       }
 
       auditLogger.log(
-        AuthObjHolder.getAuthObj(request),
-        ResourceHolder.getResource(request),
-        request.getMethod(),
-        request.getRequestURI(),
+        authObj,
+        restApi.getId(),
+        restApi.getVerb(),
+        restApi.getUriPattern(),
+        restApi.getName(),
         remoteIp,
         requestBody,
         responseBody,
         e,
+        requestAcceptTimestamp,
         cost
       );
 
